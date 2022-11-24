@@ -26,3 +26,4 @@ package-lock.json
 report.xml
 venv/
 !requirements.txt
+gh-token
