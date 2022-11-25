@@ -21,9 +21,9 @@ Gemfile.lock
 archive.json
 draft-ietf-netconf-transaction-id.xml
 draft-lindblad-netconf-transaction-id.xml
+gh-token/lib
 lib
 package-lock.json
 report.xml
 venv/
 !requirements.txt
-gh-token
