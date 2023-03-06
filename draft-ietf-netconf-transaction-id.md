@@ -1,30 +1,34 @@
 ---
+stand_alone: true
+ipr: trust200902
 title: "Transaction ID Mechanism for NETCONF"
 abbrev: "NCTID"
-docname: draft-ietf-netconf-transaction-id-latest
 category: std
-
-ipr: trust200902
+submissiontype: IETF
 area: General
 workgroup: NETCONF
-keyword: Internet-Draft
 
-stand_alone: yes
-pi: [toc, sortrefs, symrefs]
+docname: draft-ietf-netconf-transaction-id-latest
 
-author:
- -
-    ins: J. Lindblad
-    name: Jan Lindblad
-    organization: Cisco Systems
-    email: jlindbla@cisco.com
+lang: en
+keyword:
+  - Internet-Draft
+
+pi:
+  - toc
+  - sortrefs
+  - symrefs
 
 normative:
   RFC2119:
 
 informative:
 
-
+author:
+  - ins: J. Lindblad
+    name: Jan Lindblad
+    organization: Cisco Systems
+    email: jlindbla@cisco.com
 
 --- abstract
 
@@ -43,9 +47,10 @@ need for servers to store information about the clients.
 
 # Introduction
 
-When a NETCONF client connects with a NETCONF server, a frequently
-occurring use case is for the client to find out if the configuration
-has changed since it was last connected.  Such changes could occur for
+When a NETCONF client wishes to initiate a new configuration transaction
+with a NETCONF server, a frequently occurring use case is for the
+client to find out if the configuration has changed since the client
+last communicated with the server.  Such changes could occur for
 example if another NETCONF client has made changes, or another system
 or operator made changes through other means than NETCONF.
 
@@ -61,11 +66,12 @@ that will not guarantee that the configuration remains unchanged
 when a client sends a subsequent change request, a few moments later.
 
 In order to simplify the task of tracking changes, a NETCONF server
-could implement a meta level checksum over the configuration over a
-datastore or YANG subtree, and offer clients a way to read and
-compare this checksum.  If the checksum is unchanged, clients can
-avoid performing expensive operations.  Such checksums are often
-referred to as a configuration id or transaction id (txid).
+could implement a meta level transaction tag or timestamp for an entire
+configuration datastore or YANG subtree, and offer clients a way to
+read and compare this tag or timestamp.  If the tag or timestamp is
+unchanged, clients can avoid performing expensive operations.  Such
+tags and timestamps are referred to as a transaction id (txid) in this
+document.
 
 Evidence of a transaction id feature being demanded by clients is that
 several server implementors have built proprietary and mutually
@@ -141,11 +147,6 @@ Configuration update with txid return
 interested to also learn the new txid meta data the server
 has stored for the updated parts of the configuration.
 
-Configuration update with txid specification
-: When a client issues a transaction towards a server, it may be
-interested to also specify the new txid meta data that the
-server stores for the updated parts of the configuration.
-
 Conditional configuration change
 : When a client issues a transaction towards a server, it may specify
 txid meta data for the transaction in order to allow the server to
@@ -209,7 +210,7 @@ txid values below that point of the data tree.
        |     acls (txid: ?)                              |
        |                                                 |
        |   <------------------------------------------   |
-       |   data                                          |
+       |   data (txid: 5152)                             |
        |     acls (txid: 5152)                           |
        |       acl A1 (txid: 4711)                       |
        |         aces (txid: 4711)                       |
@@ -259,7 +260,7 @@ of all child versioned nodes to the response.  In case the client
 has specified txid values for some child nodes, then these
 cases MUST be re-evaluated for those child nodes.
 
-* The node is a versioned node, and the client specified txid
+* The client specified txid
 value matches the server's txid value.  In this case the server MUST
 return the node decorated with a special "txid-match" txid value
 (e.g. "=") to the matching node, pruning any value and child nodes.
@@ -316,7 +317,10 @@ expectations."}
 ~~~
 {: title="Out of band change detected.  Client sends get-config
 request with known txid values.  Server provides update where
-changes have happened."}
+changes have happened.  Specifically ace R8 is returned since
+ace R8 is a child of a node for which the request had a
+different txid than the server, and the client did not specify
+any matching txid for the ace R8 node."}
 
 ~~~ call-flow
      Client                                            Server
@@ -1721,8 +1725,51 @@ sourcecode-name="ietf-netconf-txid-yang-push@2022-04-01.yang”}
 
 # Security Considerations
 
-TODO Security
+## NACM Access Control
 
+NACM, [RFC 8341](https://tools.ietf.org/html/rfc8341), access control
+processing happens as usual, independently of any txid handling, if
+supported by the server and enabled by the NACM configuration.
+
+It should be pointed out however, that when txid information is added
+to a reply, it may occasionally be possible for a client to deduce
+that a configuration change has happened in some part of the
+configuration to which it has no access rights.
+
+For example, a client may notice that the root node txid has changed
+while none of the subtrees it has access to have changed, and thereby
+conclude that someone else has made a change to some part of the
+configuration that is not acessible by the client.
+
+### Hash-based Txid Algorithms
+
+Servers that implement NACM and choose to implement a hash-based txid
+algorithm over the configuration may reveal to a client that the
+configuration of a subtree that the client has no access to is the
+same as it was at an earlier point in time.
+
+For example, a client with partial access to the configuration might
+observe that the root node txid was 1234. After a few configuration
+changes by other parties, the client may again observe that the root
+node txid is 1234.  It may then deduce that the configuration is the
+same as earlier, even in the parts of the configuration it has no
+access to.
+
+In some use cases, this behavior may be considered a feature, since it
+allows a security client to verify that the configuration is the same
+as expected, without transmitting or storing the actual configuration.
+
+## Unchanged Configuration
+
+It will also be possible for clients to deduce that a confiuration
+change has not happened during some period, by simply observing that
+the root node (or other subtree) txid remains unchanged.  This is
+true regardless of NACM being deployed or choice of txid algorithm.
+
+Again, there may be use cases where this behavior may be considered a
+feature, since it allows a security client to verify that the
+configuration is the same as expected, without transmitting or storing
+the actual configuration.
 
 # IANA Considerations
 
@@ -1776,6 +1823,13 @@ and
 ~~~
 
 # Changes
+
+## Major changes in -03 since -02
+
+* Added content to security considerations.
+
+* Some rewording and minor additions for clarification, based
+on mailing list feedback.
 
 ## Major changes in -02 since -01
 
@@ -1859,4 +1913,5 @@ etags.
 
 The author wishes to thank Benoît Claise for making this work happen,
 and the following individuals, who all provided helpful comments:
-Per Andersson, Kent Watsen, Andy Bierman, Robert Wilton, Qiufang Ma.
+Per Andersson, Kent Watsen, Andy Bierman, Robert Wilton, Qiufang Ma,
+Jason Sterne and Robert Varga.
