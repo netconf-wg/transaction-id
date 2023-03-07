@@ -21,8 +21,17 @@ pi:
 
 normative:
   RFC2119:
+  RFC6241:
+  RFC6991:
+  RFC7950:
+  RFC8040:
+  RFC8641:
 
 informative:
+  RFC3688:
+  RFC6020:
+  RFC7232:
+  RFC8341:
 
 author:
   - ins: J. Lindblad
@@ -78,29 +87,29 @@ several server implementors have built proprietary and mutually
 incompatible mechanisms for obtaining a transaction id from a NETCONF
 server.
 
-RESTCONF, [RFC 8040](https://tools.ietf.org/html/rfc8040),
+RESTCONF, {{RFC8040}},
 defines a mechanism for detecting changes in configuration subtrees
 based on Entity-Tags (ETags) and Last-Modified txid values.
 
 In conjunction with this, RESTCONF
 provides a way to make configuration changes conditional on the server
 confiuguration being untouched by others.  This mechanism leverages
-[RFC 7232](https://tools.ietf.org/html/rfc7232)
+{{RFC7232}}
 "Hypertext Transfer Protocol (HTTP/1.1): Conditional Requests".
 
 This document defines similar functionality for NETCONF,
-[RFC 6241](https://tools.ietf.org/html/rfc6241), and ties this in
-with YANG-Push, [RFC 8641](https://tools.ietf.org/html/rfc8641).
+{{RFC6241}}, and ties this in
+with YANG-Push, {{RFC8641}}.
 
 # Conventions and Definitions
 
 {::boilerplate bcp14}
 
 This document uses the terminology defined in
-[RFC6241](https://tools.ietf.org/html/rfc6241),
-[RFC7950](https://tools.ietf.org/html/rfc7950),
-[RFC8040](https://tools.ietf.org/html/rfc8040), and
-[RFC8641](https://tools.ietf.org/html/rfc8641).
+{{RFC6241}},
+{{RFC7950}},
+{{RFC8040}}, and
+{{RFC8641}}.
 
 In addition, this document defines the following terms:
 
@@ -173,14 +182,14 @@ The server returning txid values for the versioned nodes
 MUST ensure the txid values are changed every time there has
 been a configuration change at or below the node associated with
 the txid value.  This means any update of a config true node will
-result in a new txid value for all ancestor versioned node, up
+result in a new txid value for all ancestor versioned nodes, up
 to and including the datastore root itself.
 
 This also means a server MUST update the txid value for any
 nodes that change as a result of a configuration change, regardless
 of source, even if the changed nodes are not explicitly part
 of the change payload.  An example of this is dependent data under
-YANG [RFC 7950](https://tools.ietf.org/html/rfc7950) when- or
+YANG {{RFC7950}} when- or
 choice-statements.
 
 The server MUST NOT change the txid value of a versioned node
@@ -234,7 +243,11 @@ R9 source-port."}
 NOTE: In the call flow examples we are using a 4-digit, monotonously
 increasing integer as txid.  This is convenient and enhances
 readability of the examples, but does not reflect a typical
-implementation.  In general, the only operation defined on a pair of txid values is testing them for equality.
+implementation.  Servers may assign values randomly.  In general,
+no information can be derived by observing that some txid value is
+numerically or lexicographically lower than another txid value.
+The only operation defined on a pair of txid values is testing them
+for equality.
 
 ## Subsequent Configuration Retrieval
 
@@ -351,6 +364,28 @@ any matching txid for the ace R8 node."}
 server's and client's txid match, the etag value is '=', and
 the leaf value is pruned."}
 
+## Configuration Retrieval from the Candidate Datastore
+
+When a client retrieves the configuration from the candidate
+datastore, some of the configuration nodes may hold the same data as
+the corresponding node in the running datastore.  In such cases, the
+server MUST return the same txid value for nodes in the candidate
+datastore as in the running datastore.
+
+If a node in the candidate datastore holds different data than in the
+running datastore, the server has a choice of what to return.
+
+- The server MAY return a txid-unknown value (e.g. "!").  This may
+be convenient in servers that do not know a priori what txids will
+be used in a future, possible commit of the canidate.
+
+- If the txid-unknown value is not returned, the server MUST return
+ he txid value the node will have after commit, assuming the client
+ makes no further changes of the candidate datastore.
+
+See the example in [Transactions toward the Candidate
+Datastore](#transactions-toward-the-candidate-datastore).
+
 ## Conditional Transactions
 
 Conditional transactions are useful when a client is interested
@@ -403,7 +438,7 @@ executed."}
        |     acls (txid: ?)                              |
        |                                                 |
        |   <------------------------------------------   |
-       |   data (txid: 7688)                             |
+       |   data                                          |
        |     acls (txid: 7688)                           |
        |       acl A1 (txid: 7688)                       |
        |         aces (txid: 7688)                       |
@@ -423,9 +458,10 @@ executed."}
 ancestors, the txids are updated to the value returned in the ok
 message."}
 
-If the server rejects the transaction because the configuration
-txid value differs from the client's expectation, the
-server MUST return an rpc-error with the following values:
+If the server rejects the transaction because one or more of the
+configuration txid value(s) differs from the client's expectation,
+the server MUST return at least one rpc-error with the following
+values:
 
 ~~~
    error-tag:      operation-failed
@@ -433,8 +469,10 @@ server MUST return an rpc-error with the following values:
    error-severity: error
 ~~~
 
-Additionally, the error-info tag SHOULD contain an sx:structure
-containing relevant details about the mismatching txids.
+Additionally, the error-info tag MUST contain an sx:structure
+containing relevant details about one of the mismatching txids.
+A server MAY send multiple rpc-errors when multiple txid mismatches
+are detected.
 
 ~~~ call-flow
      Client                                            Server
@@ -466,7 +504,7 @@ part of the configuration.  Since the txid has changed
 and reports an error with details about where the mismatch was
 detected."}
 
-### Transactions toward the Candidate Datastore
+## Transactions toward the Candidate Datastore
 
 When working with the Candidate datastore, the txid validation happens
 at commit time, rather than at individual edit-config or edit-data
@@ -480,7 +518,7 @@ at commit time.
      Client                                            Server
        |                                                 |
        |   ------------------------------------------>   |
-       |   edit-config                                   |
+       |   edit-config (operation: merge)                |
        |     config (txid: 5152)                         |
        |       acls (txid: 5152)                         |
        |         acl A1 (txid: 4711)                     |
@@ -490,7 +528,7 @@ at commit time.
        |   ok                                            |
        |                                                 |
        |   ------------------------------------------>   |
-       |   edit-config                                   |
+       |   edit-config (operation: merge)                |
        |     config                                      |
        |       acls                                      |
        |         acl A1                                  |
@@ -502,6 +540,23 @@ at commit time.
        |   ok                                            |
        |                                                 |
        |   ------------------------------------------>   |
+       |   get-config                                    |
+       |     config                                      |
+       |       acls                                      |
+       |         acl A1                                  |
+       |           aces (txid: ?)                        |
+       |                                                 |
+       |   <------------------------------------------   |
+       |     config                                      |
+       |       acls                                      |
+       |         acl A1                                  |
+       |           aces (txid: 7688  or !)               |
+       |             ace R1 (txid: 7688 or !)            |
+       |               matches ipv4 protocol tcp         |
+       |             ace R2 (txid: 2219)                 |
+       |               matches ipv4 dscp 21              |
+       |                                                 |
+       |   ------------------------------------------>   |
        |   commit (request new txid in response)         |
        |                                                 |
        |   <------------------------------------------   |
@@ -510,8 +565,13 @@ at commit time.
 ~~~
 {: title="Conditional transaction towards the Candidate datastore
 successfully executed.  As all the txid values specified by the
-client matched those on the server, the transaction was successfully
-executed."}
+client matched those on the server at the time of the commit,
+the transaction was successfully executed.  If a client issues a
+get-config towards the candidate datastore, the server may choose
+to return the special txid-unknown value (e.g. "!") or the txid
+value that would be used if the candidate was committed without
+further changes (if that txid value is known in advance by the
+server)."}
 
 ## Dependencies within Transactions
 
@@ -645,12 +705,9 @@ as in the running datastore when this operation runs.
 
 copy-config
 : The copy-config operation can be used to copy contents between
-datastores.  The server MUST ensure the txid values retain
-the same txid values as in the soruce datastore.
-: If copy-config is used to copy from a file, URL or other source that
-is not a datastore, the server MUST ensure the txid values
-are changed for the versioned nodes that are changed or have child
-nodes changed by the operation.
+datastores.  The server MUST ensure the txid values are retained
+and changed as if the data being copied had been sent in through an
+edit-config operation.
 
 delete-config
 : The server MUST ensure the datastore txid value is changed, unless it
@@ -669,7 +726,7 @@ an rpc-error as described in section
 
 A client issuing a YANG-Push establish-subscription or
 modify-subscription request towards a server that supports both
-YANG-Push [RFC 8641](https://tools.ietf.org/html/rfc8641) and a txid
+YANG-Push {{RFC8641}} and a txid
 mechanism MAY request that the server provides updated txid values in
 YANG-Push subscription updates.
 
@@ -709,7 +766,7 @@ The etag attribute values are opaque UTF-8 strings chosen freely,
 except that the etag string must not contain space, backslash
 or double quotes. The point of this restriction is to make it easy to
 reuse implementations that adhere to section 2.3.1 in
-[RFC 7232](https://tools.ietf.org/html/rfc7232).  The probability
+{{RFC7232}}.  The probability
 SHOULD be made very low that an etag value that has been used
 historically by a server is used again by that server if the
 configuration is different.
@@ -721,7 +778,7 @@ might implement), if it implements more than one.
 The detailed rules for when to update the etag value are described in
 section [General Txid Principles](#general-txid-principles).  These
 rules are chosen to be consistent with the ETag mechanism in
-RESTCONF, [RFC 8040](https://tools.ietf.org/html/rfc8040),
+RESTCONF, {{RFC8040}},
 specifically sections 3.4.1.2, 3.4.1.3 and 3.5.2.
 
 ## The last-modified attribute txid mechanism
@@ -739,8 +796,7 @@ capability
 "urn:ietf:params:netconf:capability:txid:last-modified:1.0".
 
 The last-modified attribute values are yang:date-and-time values as
-defined in ietf-yang-types.yang,
-[RFC 6991](https://datatracker.ietf.org/doc/html/rfc6991).
+defined in ietf-yang-types.yang, {{RFC6991}}.
 
 "2022-04-01T12:34:56.123456Z" is an example of what this time stamp
 format looks like.  It is RECOMMENDED that the time stamps provided
@@ -758,7 +814,7 @@ across all management interfaces (i.e. NETCONF and any other the
 server might implement), except RESTCONF.
 
 RESTCONF, as defined in
-[RFC 8040](https://tools.ietf.org/html/rfc8040),
+{{RFC8040}},
 is using a different format for the time stamps which is
 limited to one second resolution.  Server implementors that support
 the Last-Modified txid mechanism over both RESTCONF and other
@@ -770,10 +826,12 @@ The detailed rules for when to update the last-modified value are
 described in section
 [General Txid Principles](#general-txid-principles).  These rules
 are chosen to be consistent with the Last-Modified mechanism in
-RESTCONF, [RFC 8040](https://tools.ietf.org/html/rfc8040),
+RESTCONF, {{RFC8040}},
 specifically sections 3.4.1.1, 3.4.1.3 and 3.5.1.
 
 ## Common features to both etag and last-modified txid mechanisms
+
+### Clients
 
 Clients MAY add etag or last-modified attributes to zero or
 more individual elements in the get-config or get-data filter, in
@@ -804,6 +862,8 @@ section, as well as parent nodes.  Later edit sections in the same
 push-update or push-change-update may still supercede the txid value
 for some or all of the nodes in the current edit section.
 
+### Servers
+
 Servers returning txid values in get-config, edit-config, get-data,
 edit-data and commit operations MUST do so by adding etag and/or
 last-modified txid attributes to the data and ok tags.  When
@@ -816,6 +876,22 @@ as defined in section
 [Conditional Transactions](#conditional-transactions) with an
 error-info tag containing a txid-value-mismatch-error-info
 structure.
+
+When servers return txid values in get-config and get-data operations
+towards the candidate datastore, the txid values returned MUST adhere
+to the following rules:
+
+- If the versioned node holds the same data as in the running
+datastore, the same txid value as the versioned node in running
+MUST be used.
+
+- If the versioned node is different in the candidata store
+than in the running datastore, the server has a choice of what
+to return. The server MAY return the special "txid-unknown" value "!".
+If the txid-unknown value is not returned, the server MUST return
+the txid value the versioned node will have if the client decides to commit the candidate datastore without further updates.
+
+### Namespaces and Attributes Placement
 
 The txid attributes are valid on the following NETCONF tags,
 where xmlns:nc="urn:ietf:params:xml:ns:netconf:base:1.0",
@@ -1585,6 +1661,97 @@ and might send:
 </rpc-reply>
 ~~~
 
+## Reading from the Candidate Datastore
+
+Let's assume that a get-config towards the running datastore
+currently contains the following data and txid values:
+
+~~~ xml
+<rpc-reply message-id="12"
+           xmlns="urn:ietf:params:xml:ns:netconf:base:1.0"
+           xmlns:txid="urn:ietf:params:xml:ns:netconf:txid:1.0">
+  <data>
+    <acls
+      xmlns="urn:ietf:params:xml:ns:yang:ietf-access-control-list"
+      txid:etag="nc4711">
+      <acl txid:etag="nc4711">
+        <name>A1</name>
+        <aces txid:etag="nc4711">
+          <ace txid:etag="nc4711">
+            <name>R1</name>
+            <matches>
+              <ipv4>
+                <protocol>udp</protocol>
+              </ipv4>
+            </matches>
+          </ace>
+          <ace txid:etag="nc2219">
+            <name>R2</name>
+            <matches>
+              <ipv4>
+                <dscp>21</dscp>
+              </ipv4>
+            </matches>
+          </ace>
+        </aces>
+      </acl>
+    </acls>
+  </data>
+</rpc-reply>
+~~~
+
+A client issues discard-changes (to make the candidate datastore
+equal to the running datastore), and issues an edit-config to
+change the R1 protocol from udp to tcp, and then executes a
+get-config with the txid-request attribute "?" set on the acl A1,
+the server might respond:
+
+~~~ xml
+<rpc-reply message-id="13"
+           xmlns="urn:ietf:params:xml:ns:netconf:base:1.0"
+           xmlns:txid="urn:ietf:params:xml:ns:netconf:txid:1.0">
+  <data>
+    <acls
+      xmlns="urn:ietf:params:xml:ns:yang:ietf-access-control-list">
+      <acl txid:etag="!">
+        <name>A1</name>
+        <aces txid:etag="!">
+          <ace txid:etag="!">
+            <name>R1</name>
+            <matches>
+              <ipv4>
+                <protocol>tcp</protocol>
+              </ipv4>
+            </matches>
+          </ace>
+          <ace txid:etag="nc2219">
+            <name>R2</name>
+            <matches>
+              <ipv4>
+                <dscp>21</dscp>
+              </ipv4>
+            </matches>
+          </ace>
+        </aces>
+      </acl>
+    </acls>
+  </data>
+</rpc-reply>
+~~~
+
+Here, the txid-unknown value "!" is sent by the server.  This
+particular server implementation does not know beforehand which
+txid value would be used for this versioned node after commit.
+It will be a value different from the current corresponding
+txid value in the running datastore.
+
+In case the server is able to predict the txid value that would
+be used for the versioned node after commit, it could respond
+with that value instead.  Let's say the server knows the txid
+would be "7688" if the candidate datastore was committed without
+further changes, then it would respond with that value in each
+place where the example shows "!" above.
+
 ## Using etags with Other NETCONF Operations
 
 The client MAY request that the new etag txid value is returned as an
@@ -1594,7 +1761,7 @@ requests this by adding with-etag to the commit operation.
 For example, a client might send:
 
 ~~~ xml
-<rpc message-id="12"
+<rpc message-id="14"
     xmlns="urn:ietf:params:xml:ns:netconf:base:1.0">
     xmlns:ietf-netconf-txid=
       "urn:ietf:params:xml:ns:yang:ietf-netconf-txid"
@@ -1607,7 +1774,7 @@ For example, a client might send:
 Assuming the server accepted the transaction, it might respond:
 
 ~~~ xml
-<rpc-reply message-id="12"
+<rpc-reply message-id="15"
     xmlns="urn:ietf:params:xml:ns:netconf:base:1.0"
     xmlns:txid="urn:ietf:params:xml:ns:netconf:txid:1.0">
   <ok txid:etag="nc8008"/>
@@ -1621,7 +1788,7 @@ subscriptions are annotated with the txid values.  The request might
 look like this:
 
 ~~~ xml
-<netconf:rpc message-id="13"
+<netconf:rpc message-id="16"
              xmlns:netconf="urn:ietf:params:xml:ns:netconf:base:1.0">
   <establish-subscription
       xmlns=
@@ -1653,7 +1820,7 @@ order to no longer receive YANG Push subscription updates, the request
 might look like this:
 
 ~~~ xml
-<rpc message-id="14"
+<rpc message-id="17"
     xmlns="urn:ietf:params:xml:ns:netconf:base:1.0">
   <modify-subscription
       xmlns=
@@ -1727,7 +1894,7 @@ sourcecode-name="ietf-netconf-txid-yang-push@2022-04-01.yang”}
 
 ## NACM Access Control
 
-NACM, [RFC 8341](https://tools.ietf.org/html/rfc8341), access control
+NACM, {{RFC8341}}, access control
 processing happens as usual, independently of any txid handling, if
 supported by the server and enabled by the NACM configuration.
 
@@ -1783,7 +1950,7 @@ registry:
 
 This document registers three XML namespace URNs in the 'IETF XML
 registry', following the format defined in
-[RFC 3688](https://tools.ietf.org/html/rfc3688).
+{{RFC3688}}.
 
 ~~~
   URI: urn:ietf:params:xml:ns:netconf:txid:1.0
@@ -1798,7 +1965,7 @@ registry', following the format defined in
 ~~~
 
 This document registers two module names in the 'YANG Module Names'
-registry, defined in [RFC 6020](https://tools.ietf.org/html/rfc6020).
+registry, defined in {{RFC6020}}.
 
 ~~~
   name: ietf-netconf-txid
@@ -1826,16 +1993,33 @@ and
 
 ## Major changes in -03 since -02
 
+* Changed the logic around how txids are handled in the candidate
+datastore, both when reading (get-config, get-data) and writing
+(edit-config, edit-data). Introduced a special "txid-unknown"
+value "!".
+
+* Changed the logic of copy-config to be similar to edit-config.
+
 * Added content to security considerations.
+
+* Updated language about error-info sent at txid mismatch in an
+edit-config: error-info with mismatch details MUST be sent when
+mismatch detected, and that the server can choose one of the txid
+mismatch occurrences if there is more than one.
 
 * Some rewording and minor additions for clarification, based
 on mailing list feedback.
+
+* Divided RFC references into normative and informative.
+
+* Corrected a logic error in the second figure (figure 6) in the
+"Conditional Transactions" section
 
 ## Major changes in -02 since -01
 
 * A last-modified txid mechanism has been added (back).  This
 mechanism aligns well with the Last-Modified mechanism defined in
-RESTCONF [RFC 8040](https://tools.ietf.org/html/rfc8040),
+RESTCONF {{RFC8040}},
 but is not a carbon copy.
 
 * YANG Push functionality has been added.  This allows YANG Push
