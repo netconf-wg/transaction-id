@@ -54,7 +54,7 @@ module ietf-netconf-txid {
      they appear in all capitals, as shown here.
      ";
 
-  revision 2022-04-01 {
+  revision 2023-03-01 {
     description
       "Initial revision";
     reference
@@ -76,8 +76,8 @@ module ietf-netconf-txid {
     description 
       "Unique Entity-tag txid value representing a specific 
       transaction.  Could be any string that does not contain 
-      spaces, double quotes or backslash.  The txid values '?' 
-      and '=' have special meaning.";
+      spaces, double quotes or backslash.  The txid values '?',
+      '!' and '=' have special meaning.";
   }
 
   typedef last-modified-t {
@@ -88,6 +88,12 @@ module ietf-netconf-txid {
           description "Txid value used by clients that is 
             guaranteed not to match any txid on the server.";
         }
+        enum ! {
+          description "Txid value used by servers to indicate 
+            the node in the candidate datastore has changed
+            relative the running datastore, but not yet received
+            a new txid value on the server.";
+        }
         enum = {
           description "Txid value used by servers to indicate 
             that contents has been pruned due to txid match
@@ -97,7 +103,7 @@ module ietf-netconf-txid {
     }
     description
       "Last-modified txid value representing a specific transaction.
-       The txid values '?' and '=' have special meaning.";
+       The txid values '?', '!' and '=' have special meaning.";
   }
 
   grouping txid-grouping {

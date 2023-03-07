@@ -1880,7 +1880,7 @@ A server might send a subscription update like this:
 {::include yang/ietf-netconf-txid.yang}
 ~~~~
 {: sourcecode-markers="true"
-sourcecode-name="ietf-netconf-txid@2022-04-01.yang”}
+sourcecode-name="ietf-netconf-txid@2023-03-01.yang”}
 
 ## Additional support for txid in YANG-Push
 
