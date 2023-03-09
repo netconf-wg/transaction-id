@@ -215,8 +215,8 @@ txid values below that point of the data tree.
      Client                                            Server
        |                                                 |
        |   ------------------------------------------>   |
-       |   get-config                                    |
-       |     acls (txid: ?)                              |
+       |   get-config (txid: ?)                          |
+       |     acls                                        |
        |                                                 |
        |   <------------------------------------------   |
        |   data (txid: 5152)                             |
@@ -454,9 +454,8 @@ executed."}
        |             matches tcp source-port port 830    |
        v                                                 v
 ~~~
-{: title="For all leaf objects that were changed, and all their
-ancestors, the txids are updated to the value returned in the ok
-message."}
+{: title="The txids are updated on all versioned nodes that
+were modified themselves or have a child node that was modified."}
 
 If the server rejects the transaction because one or more of the
 configuration txid value(s) differs from the client's expectation,
@@ -570,7 +569,7 @@ the transaction was successfully executed.  If a client issues a
 get-config towards the candidate datastore, the server may choose
 to return the special txid-unknown value (e.g. "!") or the txid
 value that would be used if the candidate was committed without
-further changes (if that txid value is known in advance by the
+further changes (when that txid value is known in advance by the
 server)."}
 
 ## Dependencies within Transactions
@@ -585,6 +584,16 @@ energy that is consumed by a given access control rule.  The
 energy-example module augments the access control module as follows:
 
 ~~~ yang
+module energy-example {
+...
+
+  container energy {
+    leaf metering-enabled {
+      type boolean;
+      default false;
+    }
+  }
+
   augment /acl:acls/acl:acl {
     when /energy-example:energy/energy-example:metering-enabled;
     leaf energy-tracing {
@@ -597,6 +606,7 @@ energy-example module augments the access control module as follows:
       units J;
     }
   }
+}
 ~~~
 
 This means there is a system wide switch leaf metering-enabled in
@@ -662,7 +672,10 @@ be indirectly modified by this change.  Such indirect changes will also
 result in txid changes."}
 
 After the transaction above, the new configuration state has the
-energy-tracing leafs removed.
+energy-tracing leafs removed.  Every such removal or (re)introduction
+of a node counts as a configuration change from a txid perspective,
+regardless of whether the change has any net configuration change
+effect in the server.
 
 ~~~ call-flow
      Client                                            Server
@@ -693,7 +706,8 @@ energy-tracing leafs removed.
 {: title="The txid for the energy subtree has changed since that was
 the target of the edit-config.  The txids of the ACLs have also
 changed since the energy-tracing leafs are now removed by the
-now false when-expression."}
+now false when-expression.  Both acl A1 and acl A2 have their txids
+updated, even though energy-tracing was already false for acl A1."}
 
 ## Other NETCONF Operations
 
@@ -729,6 +743,42 @@ modify-subscription request towards a server that supports both
 YANG-Push {{RFC8641}} and a txid
 mechanism MAY request that the server provides updated txid values in
 YANG-Push subscription updates.
+
+~~~ call-flow
+     Client                                            Server
+       |                                                 |
+       |   ------------------------------------------>   |
+       |   rpc                                           |
+       |     establish-subscription                      |
+       |       datastore running                         |
+       |       datastore-xpath-filter /acls              |
+       |       periodic 500                              |
+       |       with-etag true                            |
+       |                                                 |
+       |   <------------------------------------------   |
+       |   ok                                            |
+       |                                                 |
+       |   <------------------------------------------   |
+       |   notification                                  |
+       |     eventTime 2022-04-04T06:00:24.16Z           |
+       |     push-change-update                          |
+       |       id 89                                     |
+       |       datastore-changes                         |
+       |         yang-patch                              |
+       |           patch-id 0                            |
+       |           edit (txid: 8008)                     |
+       |             edit-id edit1                       |
+       |             operation delete                    |
+       |             target /acls                        |
+       |               value                             |
+       |                 acl                             |
+       |                   name A1                       |
+       |                                                 |
+       v                                                 v
+~~~
+{: title="A client requests a YANG-Push subscription for a given
+path with txid values included.  Later, when the server delivers a
+push-change-update notification, the txid is included."}
 
 # Txid Mechanisms
 
@@ -831,8 +881,6 @@ specifically sections 3.4.1.1, 3.4.1.3 and 3.5.1.
 
 ## Common features to both etag and last-modified txid mechanisms
 
-### Clients
-
 Clients MAY add etag or last-modified attributes to zero or
 more individual elements in the get-config or get-data filter, in
 which case they pertain to the subtree(s) rooted at the element(s)
@@ -862,8 +910,6 @@ section, as well as parent nodes.  Later edit sections in the same
 push-update or push-change-update may still supercede the txid value
 for some or all of the nodes in the current edit section.
 
-### Servers
-
 Servers returning txid values in get-config, edit-config, get-data,
 edit-data and commit operations MUST do so by adding etag and/or
 last-modified txid attributes to the data and ok tags.  When
@@ -876,6 +922,8 @@ as defined in section
 [Conditional Transactions](#conditional-transactions) with an
 error-info tag containing a txid-value-mismatch-error-info
 structure.
+
+### Candidate Datastore
 
 When servers return txid values in get-config and get-data operations
 towards the candidate datastore, the txid values returned MUST adhere
@@ -891,7 +939,7 @@ to return. The server MAY return the special "txid-unknown" value "!".
 If the txid-unknown value is not returned, the server MUST return
 the txid value the versioned node will have if the client decides to commit the candidate datastore without further updates.
 
-### Namespaces and Attributes Placement
+### Namespaces and Attribute Placement
 
 The txid attributes are valid on the following NETCONF tags,
 where xmlns:nc="urn:ietf:params:xml:ns:netconf:base:1.0",
@@ -1752,7 +1800,7 @@ would be "7688" if the candidate datastore was committed without
 further changes, then it would respond with that value in each
 place where the example shows "!" above.
 
-## Using etags with Other NETCONF Operations
+## Commit
 
 The client MAY request that the new etag txid value is returned as an
 attribute on the ok response for a successful commit.  The client
@@ -2000,7 +2048,12 @@ value "!".
 
 * Changed the logic of copy-config to be similar to edit-config.
 
+* Clarified how txid values interact with when-dependencies
+together with default values.
+
 * Added content to security considerations.
+
+* Added a high-level example for YANG-Push subscriptions with txid.
 
 * Updated language about error-info sent at txid mismatch in an
 edit-config: error-info with mismatch details MUST be sent when
