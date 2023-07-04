@@ -1705,7 +1705,7 @@ A client that wishes to update the ace R1 protocol to tcp might send:
               </matches>
               <actions>
                 <forwarding xmlns:acl=
-                "urn:ietf:params:xml:ns:yang:ietf-access-control-list">
+              "urn:ietf:params:xml:ns:yang:ietf-access-control-list">
                   acl:accept
                 <forwarding>
               </actions>
@@ -2148,9 +2148,7 @@ look like this:
           "urn:ietf:params:xml:ns:yang:ietf-access-control-list">
       /acl:acls
     </yp:datastore-xpath-filter>
-    <yp:periodic>
-      <yp:period>500</yp:period>
-    </yp:periodic>
+    <yp:on-change/>
     <ietf-netconf-txid-yp:with-etag>
       true
     </ietf-netconf-txid-yp:with-etag>
@@ -2222,7 +2220,124 @@ A server might send a subscription update like this:
 
 ## NMDA Compare
 
-FIXME example
+The following example is taken from section 5 of {{RFC9144}}.
+It compares the difference between the operational and intended
+datastores for a subtree under "interfaces".
+
+In this version of the example, the client requests that txid
+values, in this case etag-values, are annotated to the result.
+
+~~~ xml
+<rpc message-id="101"
+    xmlns="urn:ietf:params:xml:ns:netconf:base:1.0">
+  <compare xmlns="urn:ietf:params:xml:ns:yang:ietf-nmda-compare"
+      xmlns:ds="urn:ietf:params:xml:ns:yang:ietf-datastores"
+      xmlns:ietf-netconf-txid-nmda-compare=
+        "urn:ietf:params:xml:ns:yang:ietf-netconf-txid-nmda-compare">
+    <source>ds:operational</source>
+    <target>ds:intended</target>
+    <report-origin/>
+    <ietf-netconf-txid-nmda-compare:with-etag>
+      true
+    </ietf-netconf-txid-nmda-compare:with-etag>
+    <xpath-filter
+        xmlns:if="urn:ietf:params:xml:ns:yang:ietf-interfaces">
+      /if:interfaces
+    </xpath-filter>
+  </compare>
+</rpc>
+~~~
+
+RPC reply when a difference is detected:
+
+~~~ xml
+<rpc-reply
+    xmlns="urn:ietf:params:xml:ns:netconf:base:1.0"
+    message-id="101">
+  <differences
+    xmlns="urn:ietf:params:xml:ns:yang:ietf-nmda-compare"
+    xmlns:or="urn:ietf:params:xml:ns:yang:ietf-origin"
+    xmlns:ietf-netconf-txid-nmda-compare=
+      "urn:ietf:params:xml:ns:yang:ietf-netconf-txid-nmda-compare">
+    <yang-patch>
+      <patch-id>interface status</patch-id>
+      <comment>
+        diff between operational (source) and intended (target),
+        with txid values taken from intended.
+      </comment>
+      <edit>
+        <edit-id>1</edit-id>
+        <operation>replace</operation>
+        <target>/ietf-interfaces:interface=eth0/enabled</target>
+        <value>
+          <if:enabled>false</if:enabled>
+        </value>
+        <source-value>
+          <if:enabled or:origin="or:learned">true</if:enabled>
+        </source-value>
+        <ietf-netconf-txid-nmda-compare:etag-value>
+          4004
+        </ietf-netconf-txid-nmda-compare:etag-value>
+      </edit>
+      <edit>
+        <edit-id>2</edit-id>
+        <operation>create</operation>
+        <target>/ietf-interfaces:interface=eth0/description</target>
+        <value>
+          <if:description>ip interface</if:description>
+        </value>
+        <ietf-netconf-txid-nmda-compare:etag-value>
+          8008
+        </ietf-netconf-txid-nmda-compare:etag-value>
+      </edit>
+    </yang-patch>
+  </differences>
+</rpc-reply>
+~~~
+
+The same response in RESTCONF (using JSON format):
+
+~~~ http
+HTTP/1.1 200 OK
+Date: Thu, 24 Jan 2019 20:56:30 GMT
+Server: example-server
+Content-Type: application/yang-data+json
+
+{ "ietf-nmda-compare:output" : {
+    "differences" : {
+      "ietf-yang-patch:yang-patch" : {
+        "patch-id" : "interface status",
+        "comment" : "diff between intended (source) and operational",
+        "edit" : [
+          {
+            "edit-id" : "1",
+            "operation" : "replace",
+            "target" : "/ietf-interfaces:interface=eth0/enabled",
+            "value" : {
+              "ietf-interfaces:interface/enabled" : "false"
+            },
+            "source-value" : {
+              "ietf-interfaces:interface/enabled" : "true",
+              "@ietf-interfaces:interface/enabled" : {
+                "ietf-origin:origin" : "ietf-origin:learned"
+              }
+            },
+            "ietf-netconf-txid-nmda-compare:etag-value": "4004"
+          },
+          {
+            "edit-id" : "2",
+            "operation" : "create",
+            "target" : "/ietf-interfaces:interface=eth0/description",
+            "value" : {
+              "ietf-interface:interface/description" : "ip interface"
+            },
+            "ietf-netconf-txid-nmda-compare:etag-value": "8008"
+          }
+        ]
+      }
+    }
+  }
+}
 
 # YANG Modules
 
