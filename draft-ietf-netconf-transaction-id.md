@@ -2583,7 +2583,7 @@ registry', following the format defined in
 
   URI: urn:ietf:params:xml:ns:yang:ietf-netconf-txid-nmda-compare
 
-  Registrant Contact: The NETCONF WG of the IETF.
+  Registrant Contact: The IESG.
 
   XML: N/A, the requested URIs are XML namespaces.
 ~~~
