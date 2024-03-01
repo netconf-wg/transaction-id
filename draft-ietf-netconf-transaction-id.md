@@ -2502,7 +2502,7 @@ Content-Type: application/yang-data+json
 {::include yang/ietf-netconf-txid.yang}
 ~~~~
 {: sourcecode-markers="true"
-sourcecode-name="ietf-netconf-txid@2023-03-01.yang”}
+sourcecode-name="ietf-netconf-txid@2023-03-01.yang"}
 
 ## Additional support for txid in YANG-Push
 
@@ -2510,7 +2510,7 @@ sourcecode-name="ietf-netconf-txid@2023-03-01.yang”}
 {::include yang/ietf-netconf-txid-yang-push.yang}
 ~~~~
 {: sourcecode-markers="true"
-sourcecode-name="ietf-netconf-txid-yang-push@2022-04-01.yang”}
+sourcecode-name="ietf-netconf-txid-yang-push@2022-04-01.yang"}
 
 ## Additional support for txid in NMDA Compare
 
@@ -2518,7 +2518,7 @@ sourcecode-name="ietf-netconf-txid-yang-push@2022-04-01.yang”}
 {::include yang/ietf-netconf-txid-nmda-compare.yang}
 ~~~~
 {: sourcecode-markers="true"
-sourcecode-name="ietf-netconf-txid-nmda-compare@2023-05-01.yang”}
+sourcecode-name="ietf-netconf-txid-nmda-compare@2023-05-01.yang"}
 
 # Security Considerations
 
