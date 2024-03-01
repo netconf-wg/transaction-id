@@ -74,8 +74,8 @@ module ietf-netconf-txid {
       statement.  Which YANG nodes are versioned nodes may be useful
       information for clients (especially during development).
       
-      Servers are not required to use this statement to declare which
-      nodes are versioned nodes.
+      Servers are not required to use this statement to declare
+      which nodes are versioned nodes.
       
       Example of use:
 
