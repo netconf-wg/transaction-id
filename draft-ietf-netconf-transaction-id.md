@@ -25,7 +25,11 @@ normative:
   RFC6991:
   RFC7950:
   RFC8040:
+  RFC8072:
+  RFC8526:
+  RFC8639:
   RFC8641:
+  RFC8791:
   RFC9144:
 
 informative:
@@ -1090,18 +1094,22 @@ the element.
 NETCONF servers that support this extension MUST announce the
 capability "urn:ietf:params:netconf:capability:txid:etag:1.0".
 
-The etag attribute values are opaque UTF-8 strings chosen freely,
-except that the etag string must not contain space, backslash
-or double quotes. The point of this restriction is to make it easy to
-reuse implementations that adhere to section 2.3.1 in
-{{RFC7232}}.  The probability
+The etag attribute values are opaque strings chosen freely.  They MUST
+consist of ASCII printable characters (VCHAR), except that the etag
+string MUST NOT contain space, backslash or double quotes. The point of
+these restrictions is to make it easy to reuse implementations that
+adhere to section 2.3.1 in {{RFC7232}}.  The probability
 SHOULD be made very low that an etag value that has been used
 historically by a server is used again by that server if the
 configuration is different.
 
 It is RECOMMENDED that the same etag txid values are used across all
 management interfaces (i.e. NETCONF, RESTCONF and any other the server
-might implement), if it implements more than one.
+might implement), if it implements more than one.  It is RECOMMENDED
+that the etag txid has an encoding specific suffix, especially when it
+is not encoded in XML.  E.g. a response encoded in JSON might append
+"+json" at the end of the etag value. This is in line with the language
+in {{RFC7232}} and traditions in the HTTP world at large.
 
 The detailed rules for when to update the etag value are described in
 section [General Txid Principles](#general-txid-principles).  These
@@ -1223,7 +1231,7 @@ The txid attributes are valid on the following NETCONF tags,
 where xmlns:nc="urn:ietf:params:xml:ns:netconf:base:1.0",
 xmlns:ncds="urn:ietf:params:xml:ns:yang:ietf-netconf-nmda",
 xmlns:sn="urn:ietf:params:xml:ns:yang:ietf-subscribed-notifications",
-xmlns:yp="urn:ietf:params:xml:ns:yang:ietf-yang-patch" and
+xmlns:yp="urn:ietf:params:xml:ns:yang:ietf-yang-push" and
 xmlns:ypatch="urn:ietf:params:xml:ns:yang:ietf-yang-patch":
 
 In client messages sent to a server:
@@ -2263,7 +2271,7 @@ For example, a client might send:
 Assuming the server accepted the transaction, it might respond:
 
 ~~~ xml
-<rpc-reply message-id="15"
+<rpc-reply message-id="14"
     xmlns="urn:ietf:params:xml:ns:netconf:base:1.0"
     xmlns:txid="urn:ietf:params:xml:ns:netconf:txid:1.0">
   <ok txid:etag="nc8008"/>
@@ -2302,31 +2310,6 @@ look like this:
 </netconf:rpc>
 ~~~
 
-In case a client wishes to modify a previous subscription request in
-order to no longer receive YANG-Push subscription updates, the request
-might look like this:
-
-~~~ xml
-<rpc message-id="17"
-    xmlns="urn:ietf:params:xml:ns:netconf:base:1.0">
-  <modify-subscription
-      xmlns=
-        "urn:ietf:params:xml:ns:yang:ietf-subscribed-notifications"
-      xmlns:yp="urn:ietf:params:xml:ns:yang:ietf-yang-push"
-      xmlns:ietf-netconf-txid-yp=
-        "urn:ietf:params:xml:ns:yang:ietf-txid-yang-push">
-    <id>1011</id>
-    <yp:datastore
-        xmlns:ds="urn:ietf:params:xml:ns:yang:ietf-datastores">
-      ds:running
-    </yp:datastore>
-    <ietf-netconf-txid-yp:with-etag>
-      false
-    </ietf-netconf-txid-yp:with-etag>
-  </modify-subscription>
-</rpc>
-~~~
-
 A server might send a subscription update like this:
 
 ~~~ xml
@@ -2362,6 +2345,31 @@ A server might send a subscription update like this:
     </datastore-changes>
   </push-change-update>
 </notification>
+~~~
+
+In case a client wishes to modify a previous subscription request in
+order to no longer receive YANG-Push subscription updates, the request
+might look like this:
+
+~~~ xml
+<rpc message-id="17"
+    xmlns="urn:ietf:params:xml:ns:netconf:base:1.0">
+  <modify-subscription
+      xmlns=
+        "urn:ietf:params:xml:ns:yang:ietf-subscribed-notifications"
+      xmlns:yp="urn:ietf:params:xml:ns:yang:ietf-yang-push"
+      xmlns:ietf-netconf-txid-yp=
+        "urn:ietf:params:xml:ns:yang:ietf-txid-yang-push">
+    <id>1011</id>
+    <yp:datastore
+        xmlns:ds="urn:ietf:params:xml:ns:yang:ietf-datastores">
+      ds:running
+    </yp:datastore>
+    <ietf-netconf-txid-yp:with-etag>
+      false
+    </ietf-netconf-txid-yp:with-etag>
+  </modify-subscription>
+</rpc>
 ~~~
 
 ## NMDA Compare
@@ -2627,6 +2635,16 @@ and
 ~~~
 
 # Changes
+
+## Major changes in -03 since -02
+
+* Updated language slightly regarding format of etag values, and some
+recommendations for implementors that support etags in multiple management
+protocols (NETCONF, RESTCONF, ...) and encodings (XML, JSON, ...).
+
+* Added missing normative RFC references.
+
+* Corrected the YANG-push namespace reference.
 
 ## Major changes in -02 since -01
 
