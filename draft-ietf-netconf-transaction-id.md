@@ -21,11 +21,15 @@ pi:
 
 normative:
   RFC2119:
+  RFC4741:
   RFC6241:
+  RFC6242:
   RFC6991:
   RFC7950:
   RFC8040:
   RFC8072:
+  RFC8341:
+  RFC8446:
   RFC8526:
   RFC8639:
   RFC8641:
@@ -37,7 +41,6 @@ informative:
   RFC6020:
   RFC7232:
   RFC7952:
-  RFC8341:
 
 author:
   - ins: J. Lindblad
@@ -620,7 +623,7 @@ values:
    error-severity: error
 ~~~
 
-Additionally, the error-info tag MUST contain an sx:structure
+Additionally, the error-info tag MUST contain an sx:structure {{RFC8791}}
 containing relevant details about one of the mismatching txids.
 A server MAY send multiple rpc-errors when multiple txid mismatches
 are detected.
@@ -1228,11 +1231,11 @@ commit the candidate datastore without further updates.
 ### Namespaces and Attribute Placement
 
 The txid attributes are valid on the following NETCONF tags,
-where xmlns:nc="urn:ietf:params:xml:ns:netconf:base:1.0",
-xmlns:ncds="urn:ietf:params:xml:ns:yang:ietf-netconf-nmda",
-xmlns:sn="urn:ietf:params:xml:ns:yang:ietf-subscribed-notifications",
-xmlns:yp="urn:ietf:params:xml:ns:yang:ietf-yang-push" and
-xmlns:ypatch="urn:ietf:params:xml:ns:yang:ietf-yang-patch":
+where xmlns:nc="urn:ietf:params:xml:ns:netconf:base:1.0" {{RFC4741}} {{RFC6241}},
+xmlns:ncds="urn:ietf:params:xml:ns:yang:ietf-netconf-nmda" {{RFC8526}},
+xmlns:sn="urn:ietf:params:xml:ns:yang:ietf-subscribed-notifications" {{RFC8639}},
+xmlns:yp="urn:ietf:params:xml:ns:yang:ietf-yang-push" {{RFC8641}} and
+xmlns:ypatch="urn:ietf:params:xml:ns:yang:ietf-yang-patch" {{RFC8072}}:
 
 In client messages sent to a server:
 
@@ -2522,6 +2525,12 @@ sourcecode-name="ietf-netconf-txid-nmda-compare@2023-05-01.yang"}
 
 # Security Considerations
 
+The YANG modules specified in this document define YANG types, groupings, structures and additional RPC parameters for data that is designed to be accessed via network management protocols such as NETCONF [RFC6241] or RESTCONF [RFC8040]. The lowest NETCONF layer is the secure transport layer, and the mandatory-to-implement secure transport is Secure Shell (SSH) [RFC6242]. The lowest RESTCONF layer is HTTPS, and the mandatory-to-implement secure transport is TLS [RFC8446].
+
+The Network Configuration Access Control Model (NACM) [RFC8341] provides the means to restrict access for particular NETCONF or RESTCONF users to a preconfigured subset of all available NETCONF or RESTCONF protocol operations and content.
+
+In the YANG modules published with this document, there is no configuration, state data, new RPCs or notifications.  This document defines additional XML attributes and headers, however, that merit consideration from a security perspective.
+
 ## NACM Access Control
 
 NACM, {{RFC8341}}, access control
@@ -2635,6 +2644,12 @@ and
 ~~~
 
 # Changes
+
+## Major changes in -04 since -03
+
+* Updated security considerations.
+
+* Added several normative RFC references.
 
 ## Major changes in -03 since -02
 
