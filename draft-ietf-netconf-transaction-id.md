@@ -1234,8 +1234,7 @@ The txid attributes are valid on the following NETCONF tags,
 where xmlns:nc="urn:ietf:params:xml:ns:netconf:base:1.0" {{RFC4741}} {{RFC6241}},
 xmlns:ncds="urn:ietf:params:xml:ns:yang:ietf-netconf-nmda" {{RFC8526}},
 xmlns:sn="urn:ietf:params:xml:ns:yang:ietf-subscribed-notifications" {{RFC8639}},
-xmlns:yp="urn:ietf:params:xml:ns:yang:ietf-yang-push" {{RFC8641}} and
-xmlns:ypatch="urn:ietf:params:xml:ns:yang:ietf-yang-patch" {{RFC8072}}:
+xmlns:yp="urn:ietf:params:xml:ns:yang:ietf-yang-push" {{RFC8641}} {{RFC8072}}:
 
 In client messages sent to a server:
 
@@ -1269,17 +1268,17 @@ In server messages sent to a client:
 
 - /nc:rpc-reply/nc:ok
 
-- /yp:push-update/yp:datastore-contents/ypatch:yang-patch/
-  ypatch:edit
+- /yp:push-update/yp:datastore-contents/yp:yang-patch/
+  yp:edit
 
-- /yp:push-update/yp:datastore-contents/ypatch:yang-patch/
-  ypatch:edit/ypatch:value//*
+- /yp:push-update/yp:datastore-contents/yp:yang-patch/
+  yp:edit/yp:value//*
 
-- /yp:push-change-update/yp:datastore-contents/ypatch:yang-patch/
-  ypatch:edit
+- /yp:push-change-update/yp:datastore-contents/yp:yang-patch/
+  yp:edit
 
-- /yp:push-change-update/yp:datastore-contents/ypatch:yang-patch/
-  ypatch:edit/ypatch:value//*
+- /yp:push-change-update/yp:datastore-contents/yp:yang-patch/
+  yp:edit/yp:value//*
 
 # Txid Mechanism Examples
 
@@ -2644,6 +2643,10 @@ and
 ~~~
 
 # Changes
+
+## Major changes in -05 since -04
+
+* Corrected namespace for reference to elements in ietf-yang-push
 
 ## Major changes in -04 since -03
 
