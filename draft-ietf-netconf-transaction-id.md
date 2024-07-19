@@ -2578,67 +2578,65 @@ the actual configuration.
 
 # IANA Considerations
 
-This document registers the following capability identifier URN in
+## NETCONF Capability URN
+
+This document requets IANA to register the following capability identifier URN in
 the 'Network Configuration Protocol (NETCONF) Capability URNs'
 registry:
 
 ~~~
-  urn:ietf:params:netconf:capability:txid:1.0
+Capability: :txid
+Capability Identifier: urn:ietf:params:netconf:capability:txid:1.0
+Reference: RFC XXXX  
 ~~~
 
-This document registers four XML namespace URNs in the 'IETF XML
-registry', following the format defined in
-{{RFC3688}}.
+## IETF XML Registry
+
+This document request IANA to register four XML namespace URIs in the the "ns"
+subregistry within the "IETF XML Registry" {{RFC3688}}:
 
 ~~~
   URI: urn:ietf:params:xml:ns:netconf:txid:1.0
+  Registrant Contact: The IESG.
+  XML: N/A, the requested URIs are XML namespaces.
 
   URI: urn:ietf:params:xml:ns:yang:ietf-netconf-txid
+  Registrant Contact: The IESG.
+  XML: N/A, the requested URIs are XML namespaces.
 
   URI: urn:ietf:params:xml:ns:yang:ietf-netconf-txid-yang-push
+  Registrant Contact: The IESG.
+  XML: N/A, the requested URIs are XML namespaces.
 
   URI: urn:ietf:params:xml:ns:yang:ietf-netconf-txid-nmda-compare
-
   Registrant Contact: The IESG.
-
   XML: N/A, the requested URIs are XML namespaces.
 ~~~
 
-This document registers three module names in the 'YANG Module Names'
-registry, defined in {{RFC6020}}.
+## YANG Module Names
+
+This document requests IANA to register three module names in the "YANG
+Module Names" subregistry {{!RFC6020}} within the "YANG Parameters"
+registry.
 
 ~~~
   name: ietf-netconf-txid
-
   prefix: ietf-netconf-txid
-
   namespace: urn:ietf:params:xml:ns:yang:ietf-netconf-txid
-
+  maintained by IANA? N
   RFC: XXXX
-~~~
 
-and
-
-~~~
   name: ietf-netconf-txid-yp
-
   prefix: ietf-netconf-txid-yp
-
   namespace: urn:ietf:params:xml:ns:yang:ietf-netconf-txid-yang-push
-
+  maintained by IANA? N
   RFC: XXXX
-~~~
 
-and
-
-~~~
   name: ietf-netconf-txid-nmda-compare
-
   prefix: ietf-netconf-txid-nmda-compare
-
   namespace:
     urn:ietf:params:xml:ns:yang:ietf-netconf-txid-nmda-compare
-
+  maintained by IANA? N
   RFC: XXXX
 ~~~
 
