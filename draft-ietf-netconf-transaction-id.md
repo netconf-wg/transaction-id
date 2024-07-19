@@ -163,72 +163,74 @@ another txid.
 # NETCONF Txid Extension
 
 This document describes a NETCONF extension which modifies the
-behavior of get-config, get-data, edit-config, edit-data,
-discard-changes, copy-config, delete-config and commit such
+behavior of ``<get-config>``, ``<get-data>``, ``<edit-config>``, ``<edit-data>``,
+``<discard-changes>``, ``<copy-config>``, ``<delete-config>``, and ``<commit>`` operations such
 that clients are able to conditionally retrieve and update the
 configuration in a NETCONF server.
 
-For servers implementing YANG-Push, an extension for conveying txid
+For servers implementing YANG-Push {{!RFC8641}}, an extension for conveying txid
 updates as part of subscription updates is also defined.  A similar
 extension is also defined for servers implememnting
-"Comparison of NMDA Datastores".
+"Comparison of NMDA Datastores" {{!RFC9144}}.
 
 Several low level mechanisms could be defined to fulfill the
-requirements for efficient client-server txid synchronization.
-This document defines two such mechanisms, the etag txid mechanism
-and the last-modified txid mechanism. Additional mechanisms could
-be added in future.  This document is therefore divided into a two
-parts; the first part discusses the txid mechanism in an abstract,
+requirements for efficient client/server txid synchronization.
+This document defines two such mechanisms, the 'etag txid' mechanism ({{sec-etag}})
+and the 'last-modified txid' mechanism ({{sec-lm}}). However, additional txid mechanisms may be defined in the future. Scuh mechanisms have to adhere
+to the principles defined in {{sec-principles}}.
+
+This document is divided into a two
+main parts; the first part discusses the txid mechanism in an abstract,
 protocol-neutral way.  The second part,
 [Txid Mechanisms](#txid-mechanisms), then adds the protocol layer,
 and provides concrete encoding examples.
 
-## Use Cases
+## Sample Use Cases
 
-The common use cases for txid mecahnisms are briefly discussed here.
+The common use cases for txid mecahnisms are briefly discussed in this section.
 
-Initial configuration retrieval
-: When the client initially connects to a server, it may be interested
+Initial configuration retrieval:
+: When a client initially connects to a server, it may be interested
 to acquire a current view of (parts of) the server's configuration.
 In order to be able to efficiently detect changes later, it may also
 be interested to store meta level txid information for
 subtrees of the configuration.
 
-Subsequent configuration retrieval
-: When a client needs to reread (parts of) the server's configuration,
-it may be interested to leverage the txid meta data it has
+Subsequent configuration retrieval:
+: When a client needs to retrieve again (parts of) the server's configuration,
+it may be interested to leverage the txid metadata it has
 stored by requesting the server to prune the response so that it does
 not repeat configuration data that the client is already aware of.
 
-Configuration update with txid return
+Configuration update with txid return:
 : When a client issues a transaction towards a server, it may be
-interested to also learn the new txid meta data the server
+interested to also learn the new txid metadata that the server
 has stored for the updated parts of the configuration.
 
-Conditional configuration change
+Conditional configuration change:
 : When a client issues a transaction towards a server, it may specify
-txid meta data for the transaction in order to allow the server to
+txid metadata for the transaction in order to allow the server to
 verify that the client is up to date with any changes in the parts of
 the configuration that it is concerned with.  If the txid
-meta data in the server is different than the client expected, the
+metadata in the server is different than the client expected, the
 server rejects the transaction with a specific error message.
 
-Subscribe to configuration changes with txid return
+Subscribe to configuration changes with txid return:
 : When a client subscribes to configuration change updates through
-YANG-Push, it may be interested to also learn the the updated txid
-meta data for the changed data trees.
+YANG-Push, it may be interested to also learn the updated txid
+metadata for the changed data trees.
 
-## General Txid Principles
+## General Txid Principles {#sec-principles}
 
 All servers implementing a txid mechanism MUST maintain a top level
-server side txid meta data value for each configuration datastore
-supported by the server.  Server side txid is often abbreviated s-txid.
+server side txid (s-txid) metadata value for each configuration datastore
+supported by the server.
 Txid mechanism implementations MAY also maintain txid
-meta data values for nodes deeper in the YANG data tree.  The nodes
+metadata values for nodes deeper in the YANG data tree.  The nodes
 for which the server maintains txids are collectively referred to as
 the "Versioned Nodes".
 
-Server implementors MAY use the YANG extension statement
+Server implementations MAY use the YANG extension statement
 ietf-netconf-txid:versioned-node to inform potential clients about
 which YANG nodes the server maintains a txid value for.  Another way
 to discover (a partial) set of Versioned Nodes is for a client to
@@ -236,13 +238,13 @@ request the current configuration with txids.  The returned
 configuration will then have the Versioned Nodes decorated with their
 txid values.
 
-Regardless of whether the server declares the Versioned Nodes or not,
+Regardless of whether a server declares the Versioned Nodes or not,
 the set of Versioned Nodes in the server's YANG tree MUST remain
 constant, except at system redefining events, such as software upgrades
 or entitlement installations or removals.
 
 The server returning txid values for the Versioned Nodes
-MUST ensure the txid values are changed every time there has
+MUST ensure that the txid values are changed every time there has
 been a configuration change at or below the node associated with
 the txid value.  This means any update of a config true node will
 result in a new txid value for all ancestor Versioned Nodes, up
@@ -253,9 +255,9 @@ nodes that change as a result of a configuration change, and their
 ancestors, regardless
 of source, even if the changed nodes are not explicitly part
 of the change payload.  An example of this is dependent data under
-YANG {{RFC7950}} when- or choice-statements.
+YANG {{RFC7950}} "when" or "choice" statements.
 
-The server MUST NOT change the txid value of a versioned node
+A server MUST NOT change the txid value of a versioned node
 unless the node itself or a child node of that node has
 been changed.  The server MUST NOT change any txid values due to
 changes in config false data, or any kind of metadata that the
@@ -263,13 +265,13 @@ server may maintain for YANG data tree nodes.
 
 ## Initial Configuration Retrieval
 
-When a NETCONF server receives a get-config or get-data request
-containing requests for txid values, it MUST, in the reply, return
+When a NETCONF server receives a ``<get-config>`` or ``<get-data>`` request ({{Section 3.1.1 of !RFC8526}})
+containing requests for txid values, and assuming no authorization or validation error is encountered,  it MUST, in the reply, return
 txid values for all Versioned Nodes below the point requested by
 the client.
 
 The exact encoding varies by mechanism, but all txid mechanisms
-would have a special "txid-request" txid value (e.g. "?") which is
+would have a special "txid-request" txid value (e.g., "?") which is
 guaranteed to never be used as a normal txid value.  Clients MAY use
 this special txid value associated with one or more nodes in the
 data tree to indicate to the server that they are interested in
@@ -310,12 +312,12 @@ that also fall within the requested subtree filter.  The most
 recent change seems to have been an update to ace R8 and
 R9." #fig-baseline}
 
-In the call flow examples in this document we are using a 4-digit,
+> The call flow examples in this document use a 4-digit,
 monotonously increasing integer as txid.  This is convenient and
 enhances readability of the examples, but does not necessarily
 reflect a typical implementation.
 
-In principle, txid values are opaque strings that uniquely identify
+Txid values are opaque strings that uniquely identify
 a particular configuration state.  Servers are expected to know which
 txid values it has used in the recent past, and in which order they
 were assigned to configuration change transactions.  This information
@@ -325,36 +327,38 @@ How many historical txid values to track is up to each server
 implementor to decide, and a server MAY decide not to store any
 historical txid values at all.  The more txid values in the server's
 Txid History, the more efficient the client synchronization may be, as
-described in the coming sections.
+described in the coming sections. Servers may expose a configuration parameter
+to control the history depth. Such control depends on the local server capabilities.
+Refer to {{sec-histo-size}} for more considerations about history size.
 
 Some server implementors may decide to use a monotonically increasing
-integer as the txid value, or a timestamp.  Doing so obviously makes
+integer as the txid value or a timestamp.  Doing so obviously makes
 it very easy for the server to determine the sequence of historical
 transaction ids.
 
 Some server implementors may decide to use a completely different txid
 value sequence, to the point that the sequence may appear completely
-random to outside observers.  Clients MUST NOT generally assume that
+random to outside observers.  Clients MUST NOT assume or infer any semantic from txids. For example, clients mus not assume that
 servers use a txid value scheme that reveals information about the
 temporal sequence of txid values.
 
 ## Subsequent Configuration Retrieval
 
 Clients MAY request the server to return txid values in the response
-by adding one or more txid values received previously in get-config or
-get-data requests.  Txid values sent by a client are often abbreviated
+by adding one or more txid values received previously in ``<get-config>`` or
+``<get-data>`` requests.  Txid values sent by a client are refered to as
 c-txid.
 
-When a client sends in a c-txid value of a node that matches the
+When a client sends a c-txid value of a node that matches the
 server's s-txid value for that Versioned Node, or matches a more recent
 s-txid value in the server's Txid History,
-the server prunes (does not return) that subtree from
-the response.  Since the client already knows the txid for this part
+the server prunes (i.e., does not return) that subtree from
+the response.  Since the client already knows the txid for that part
 of the data tree, or a txid that occurred more recently, it
 is obviosuly already up to date with that part of the configuration.
 Sending it again would be a waste of time and energy.
 
-The table below describes in detail how the client side (c-txid) and
+{{tab-rules}} describes in detail how the client side (c-txid) and
 server side txid (s-txid) values are determined and compared when the
 server processes each data tree reply node from a get-config or
 get-data request.
@@ -374,7 +378,7 @@ Servers MUST process each of the config true nodes as follows:
 | ----- | ------------------------------- | ------------------------------- |
 |  5. CLIENT TXID OUT OF DATE | The specified c-txid is "outdated" or "unknown" to the server, i.e. it does not match the server's s-txid value for this node, nor does the client c-txid value match any s-txid value in the server's Txid History that is more recent than the server's s-txid value for this node. | In this case the server MUST return the current node according to the normal NETCONF specifications.  If the current node is a Versioned Node, it MUST be decorated with the s-txid value.  Any child nodes MUST also be evaluated with respect to these rules. |
 | ----- | ------------------------------- | ------------------------------- |
-{: title="The Txid rules for response pruning."}
+{: #tab-rules title="The Txid rules for response pruning."}
 
 For list elements, pruning child nodes means that top-level
 key nodes MUST be included in the response, and other child nodes
@@ -401,7 +405,7 @@ configuration state that the client is aware of, before this happens:
        |     acls (txid: =)                              |
        v                                                 v
 ~~~
-{: title="Response Pruning.  Client sends get-config request with
+{: #fig-pruning title="Response Pruning.  Client sends get-config request with
 known txid values.  Server prunes response where the c-txid matches
 expectations.  In this case, the server had no changes, and pruned
 the response at the earliest point offered by the client."}
@@ -438,11 +442,11 @@ s-txid values on this example server are currently: 4711, 5152, 5550,
        |             actions forwarding accept           |
        v                                                 v
 ~~~
-{: title="Out of band change detected.  Client sends get-config
+{: #fig-oob-change title="Out of band change detected.  Client sends get-config
 request with known txid values.  Server provides updates only where
 changes have happened."}
 
-In the example above, the server returns the acls container because
+In the example depicted in {{fig-oob-change}}, the server returns the acls container because
 the client supplied c-txid value (5152) differs from the s-txid value
 held by the server (6614), and 5152 is less recent in the server's
 Txid History than 6614.  The client is apparently unaware of the
@@ -463,8 +467,8 @@ exactly match (5152). Finally, acl R9 is returned because of its less
 recent c-txid value given by the client (5152, on the closest ancestor
 acl A2) than the s-txid held on the server (6614).
 
-In the next example, the client specifies the c-txid for a node that
-the server does not maintain a s-txid for, i.e. it's not a
+In the example shown in {{fig-vn}}, the client specifies the c-txid for a node that
+the server does not maintain a s-txid for, i.e., it is not a
 Versioned Node.
 
 ~~~ call-flow
@@ -491,7 +495,7 @@ Versioned Node.
        |                 dscp (txid: =)                  |
        v                                                 v
 ~~~
-{: title="Versioned Nodes.  Server lookup of dscp txid gives
+{:#fig-vn title="Versioned Nodes.  Server lookup of dscp txid gives
 4711, as closest ancestor is ace R7 with txid 4711.  Since the
 server's and client's txid match, the etag value is '=', and
 the leaf value is pruned."}
@@ -502,7 +506,7 @@ for the list entry ace R7, but not for any of its children.  Thus
 the server finds the server side s-txid value to be 4711 (from ace R7),
 which matches the client's c-txid value of 4711.
 
-Servers MUST NOT ever use the special txid values, txid-match, txid-request, txid-unknown (e.g. "=", "?", "!") as actual
+Servers MUST NOT ever use the special txid values, txid-match, txid-request, txid-unknown (e.g., "=", "?", or "!") as actual
 txid values.
 
 ## Candidate Datastore Configuration Retrieval
@@ -514,17 +518,17 @@ server MUST return the same s-txid value for nodes in the candidate
 datastore as in the running datastore.
 
 If a node in the candidate datastore holds different data than in the
-running datastore, the server has a choice of what to return.
+running datastore, the server has a choice of what to return:
 
-- The server MAY return a txid-unknown value (e.g. "!").  This may
-be convenient in servers that do not know a priori what txids will
-be used in a future, possible commit of the canidate.
+  - The server MAY return a txid-unknown value (e.g., "!").  This may
+  be convenient in servers that do not know a priori what txids will
+  be used in a future, possible commit of the canidate.
 
-- If the txid-unknown value is not returned, the server MUST return
- the s-txid value the node will have after commit, assuming the client
- makes no further changes of the candidate datastore.  If a client
- makes further changes in the candidate datastore, the s-txid value
- MAY change.
+  - If the txid-unknown value is not returned, the server MUST return
+  the s-txid value the node will have after commit, assuming the client
+  makes no further changes of the candidate datastore.  If a client
+  makes further changes in the candidate datastore, the s-txid value
+  MAY change.
 
 See the example in
 [Candidate Datastore Transactions](#candidate-datastore-transactions).
@@ -537,7 +541,7 @@ the server configuration have not changed since the client last
 inspected it.
 
 By supplying the latest c-txid values known to the client
-in its change requests (edit-config etc.), it can request the server
+in its change requests (``<edit-config>``, for example), it can request the server
 to reject the transaction in case any relevant changes have occurred
 at the server that the client is not yet aware of.
 
@@ -545,12 +549,12 @@ This allows a client to reliably compute and send configuration
 changes to a server without either acquiring a global datastore lock
 for a potentially extended period of time, or risk that a change
 from another client disrupts the intent in the time window between a
-read (get-config etc.) and write (edit-config etc.) operation.
+read (``<get-config>``, for example) and write (``<edit-config>``, for example) operation.
 
 Clients that are also interested to know the s-txid assigned to the
 modified Versioned Nodes in the model immediately in the
-response could set a flag in the rpc message to request the server
-to return the new s-txid with the ok message.
+response could set a flag in the ``<rpc>`` element to request the server
+to return the new s-txid with the ``<ok>`` element.
 
 ~~~ call-flow
      Client                                            Server
@@ -605,16 +609,16 @@ observe the change.  It would look like this:
        |             actions forwarding accept           |
        v                                                 v
 ~~~
-{: title="The txids are updated on all Versioned Nodes that
+{: #fig-updated-all title="The txids are updated on all Versioned Nodes that
 were modified themselves or have a child node that was modified."}
 
 When a client sends in a c-txid value of a node, the server MUST consider it a match if the server's s-txid value is identical to the client, or if the server's value is found earlier in the server's Txid History than the value supplied by the client.
 
-### Error response on Out of band change
+### Error Response on Out-of-Band Changes
 
 If the server rejects the transaction because one or more of the
 configuration s-txid value(s) differs from the client's expectation,
-the server MUST return at least one rpc-error with the following
+the server MUST return at least one ``<rpc-error>`` with the following
 values:
 
 ~~~
@@ -651,7 +655,7 @@ are detected.
        |       mismatch-etag-value 6912                  |
        v                                                 v
 ~~~
-{: title="Conditional transaction that fails a txid check.  The
+{: #fig-cond-fails title="Conditional transaction that fails a txid check.  The
 client wishes to ensure there has been no changes to the particular
 acl entry it edits, and therefore sends the c-txid it knows for this
 part of the configuration.  Since the s-txid has changed
@@ -659,7 +663,7 @@ part of the configuration.  Since the s-txid has changed
 and reports an error with details about where the mismatch was
 detected."}
 
-### Txid History size consideration
+### Txid History Size Consideration {#sec-histo-size}
 
 It may be tempting for a client implementor to send only the top
 level c-txid value for the tree being edited.  In most cases, that
@@ -707,7 +711,7 @@ transaction accepted.
 
 ## Candidate Datastore Transactions
 
-When working with the (or a) Candidate datastore, the txid validation
+When using the (or a) Candidate datastore, the txid validation
 happens at commit time, rather than at individual edit-config or
 edit-data operations.  Clients add their c-txid attributes to the
 configuration payload the same way.  In case a client specifies
@@ -772,21 +776,21 @@ successfully executed.  As all the c-txid values specified by the
 client matched those on the server at the time of the commit,
 the transaction was successfully executed.  If a client issues a
 get-config towards the candidate datastore, the server may choose
-to return the special txid-unknown value (e.g. "!") or the s-txid
+to return the special txid-unknown value (e.g., "!") or the s-txid
 value that would be used if the candidate was committed without
 further changes (when that s-txid value is known in advance by the
 server)."}
 
 ## Dependencies within Transactions
 
-YANG modules that contain when-statements referencing remote
+YANG modules that contain 'when' statements referencing remote
 parts of the model will cause the s-txid to change even in parts of the
 data tree that were not modified directly.
 
 Let's say there is an energy-example.yang module that defines a
 mechanism for clients to request the server to measure the amount of
 energy that is consumed by a given access control rule.  The
-energy-example module augments the access control module as follows:
+"energy-example" module augments the access control module as follows:
 
 ~~~ yang
 module energy-example {
@@ -860,7 +864,7 @@ under each acl."}
 
 At this point, a client updates metering-enabled to false.  This causes
 the when-expression on energy-tracing to turn false, removing the leaf
-entirely.  This counts as a configuration change, and the s-txid MUST
+entirely.  This counts as a configuration change, and the s-txid must
 be updated appropriately.
 
 ~~~ call-flow
@@ -924,23 +928,23 @@ updated, even though energy-tracing was already false for acl A1."}
 
 ## Other NETCONF Operations
 
-discard-changes
-: The discard-changes operation resets the candidate datastore to the
+``<discard-changes>``:
+: The ``<discard-changes>`` operation resets the candidate datastore to the
 contents of the running datastore.  The server MUST ensure the
 txid values in the candidate datastore get the same txid values
 as in the running datastore when this operation runs.
 
-copy-config
-: The copy-config operation can be used to copy contents between
+``<copy-config>``:
+: The `<copy-config>`` operation can be used to copy contents between
 datastores.  The server MUST ensure the txid values are retained
 and changed as if the data being copied had been sent in through an
 edit-config operation.
 
-delete-config
+``<delete-config>``:
 : The server MUST ensure the datastore txid value is changed, unless it
 was already empty.
 
-commit
+``<commit>``:
 : At commit, with regards to the txid values, the server MUST
 treat the contents of the candidate datastore as if any txid
 value provided by the client when updating the candidate was provided
@@ -962,8 +966,8 @@ also be invoked over RESTCONF or other protocols, and might
 therefore be encoded in JSON.
 
 To request txid values (e.g. etag), the client adds a flag in the
-request (e.g. with-etag).  The server then returns the txid
-(e.g. etag) value in the yang-patch payload (e.g. as etag-value).
+request (e.g., with-etag).  The server then returns the txid
+(e.g., etag) value in the yang-patch payload (e.g., as etag-value).
 
 ~~~ call-flow
      Client                                            Server
@@ -1069,9 +1073,9 @@ reply, the txid is included for each edit."}
 
 This document defines two txid mechanisms:
 
-- The etag attribute txid mechanism
+- The etag attribute txid mechanism ({{sec-etag}})
 
-- The last-modified attribute txid mechanism
+- The last-modified attribute txid mechanism ({{sec-lm}})
 
 Servers implementing this specification MUST support the etag
 attribute txid mechanism and MAY support the last-modified
@@ -1085,7 +1089,7 @@ If a client uses more than one txid mechanism, such as both etag and
 last-modified in a particular message to a server, or patricular
 commit, the result is undefined.
 
-## The etag attribute txid mechanism
+## The ETag Attribute txid Mechanism {#sec-etag}
 
 The etag txid mechanism described in this section is centered around
 a meta data XML attribute called "etag".  The etag attribute is
@@ -1117,10 +1121,9 @@ in {{RFC7232}} and traditions in the HTTP world at large.
 The detailed rules for when to update the etag value are described in
 section [General Txid Principles](#general-txid-principles).  These
 rules are chosen to be consistent with the ETag mechanism in
-RESTCONF, {{RFC8040}},
-specifically sections 3.4.1.2, 3.4.1.3 and 3.5.2.
+RESTCONF, specifically {{Sections 3.4.1.2, 3.4.1.3 and 3.5.2 of RFC8040}}.
 
-## The last-modified attribute txid mechanism
+## The Last-Modified Attribute txid Mechanism {#sec-lm}
 
 The last-modified txid mechanism described in this section is
 centered around a meta data XML attribute called "last-modified".
