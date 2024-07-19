@@ -56,8 +56,8 @@ data in a server may be very large, while data store changes typically
 are small when observed at typical client resynchronization intervals.
 
 Rereading the entire data store and analyzing the response for changes
-is an inefficient mechanism for synchronization.  This document
-specifies an extension to NETCONF that allows clients and servers to
+is inefficient for synchronization.  This document
+specifies an NETCONF extension that allows clients and servers to
 keep synchronized with a much smaller data exchange and without any
 need for servers to store information about the clients.
 
@@ -65,12 +65,12 @@ need for servers to store information about the clients.
 
 # Introduction
 
-When a NETCONF client wishes to initiate a new configuration transaction
+When a NETCONF client {{!RFC6241}} wishes to initiate a new configuration transaction
 with a NETCONF server, a frequently occurring use case is for the
 client to find out if the configuration has changed since the client
-last communicated with the server.  Such changes could occur for
-example if another NETCONF client has made changes, or another system
-or operator made changes through other means than NETCONF.
+last communicated with that server.  Such changes could occur, for
+example, if another NETCONF client has made changes, or another system
+or operator made changes through other means than NETCONF (e.g., local configuration).
 
 One way of detecting a change for a client would be to
 retrieve the entire configuration from the server, then compare
@@ -84,33 +84,31 @@ that will not guarantee that the configuration remains unchanged
 when a client sends a subsequent change request, a few moments later.
 
 In order to simplify the task of tracking changes, a NETCONF server
-could implement a meta level transaction tag or timestamp for an entire
+may implement a meta level transaction tag or timestamp for an entire
 configuration datastore or YANG subtree, and offer clients a way to
 read and compare this tag or timestamp.  If the tag or timestamp is
 unchanged, clients can avoid performing expensive operations.  Such
-tags and timestamps are referred to as a transaction id (txid) in this
+tags and timestamps are referred to as a 'transaction id' (txid) in this
 document.
 
-Evidence of a transaction id feature being demanded by clients is that
-several server implementors have built proprietary and mutually
+Note that several server implementors have built proprietary and mutually
 incompatible mechanisms for obtaining a transaction id from a NETCONF
-server.
+server. This document solves the interoperability issue.
 
 RESTCONF, {{RFC8040}},
 defines a mechanism for detecting changes in configuration subtrees
-based on Entity-Tags (ETags) and Last-Modified txid values.
+based on Entity-Tags (ETags) and Last-Modified headers. An example is depicted in Appendix B.2.2 of {{!RFC8040}}
 
 In conjunction with this, RESTCONF
 provides a way to make configuration changes conditional on the server
 configuration being untouched by others.  This mechanism leverages
-{{RFC7232}}
-"Hypertext Transfer Protocol (HTTP/1.1): Conditional Requests".
+conditional requests per {{Section 13 of !RFC9110}}.
 
-This document defines similar functionality for NETCONF,
-{{RFC6241}}, for config true data.  It also ties this in
+This document defines similar mechanism for NETCONF,
+{{!RFC6241}}, for config true data.  It also ties this in
 with YANG-Push, {{RFC8641}}, and "Comparison of Network
 Management Datastore Architecture (NMDA) Datastores",
-{{RFC9144}}.  Config false data (operational data, state, statistics)
+{{RFC9144}}.  'Config false' data (operational data, state, and statistics)
 is left out of scope from this document.
 
 This document does not change the RESTCONF protocol in any way, and
@@ -135,27 +133,27 @@ This document uses the terminology defined in
 
 In addition, this document defines the following terms:
 
-Versioned node
+Versioned node:
 : A node in the instantiated YANG data tree for which
 the server maintains a transaction id (txid) value.
 
-Transaction-id Mechanism
+Transaction-id Mechanism:
 : A protocol implementation that fulfills the principles described in
 the first part, [NETCONF Txid Extension](#netconf-txid-extension), of
 this document.
 
-Txid
+Txid:
 : Abbreviation of Transaction-id
 
-C-txid
-: Client side transaction-id, i.e. a txid value maintained or provided
-by a NETCONF client application.
+C-txid:
+: Client side transaction-id, i.e., a txid value maintained or provided
+by a NETCONF client.
 
-S-txid
-: Server side transaction-id, i.e. a txid value maintained or sent by
+S-txid:
+: Server side transaction-id, i.e., a txid value maintained or sent by
 a NETCONF server.
 
-Txid History
+Txid History:
 : Temporally ordered list of txid values used by the server.  Allows
 the server to determine if a given txid occurred more recently than
 another txid.
