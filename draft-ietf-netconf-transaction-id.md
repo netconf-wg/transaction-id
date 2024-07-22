@@ -57,7 +57,7 @@ are small when observed at typical client resynchronization intervals.
 
 Rereading the entire data store and analyzing the response for changes
 is inefficient for synchronization.  This document
-specifies an NETCONF extension that allows clients and servers to
+specifies a NETCONF extension that allows clients and servers to
 keep synchronized with a much smaller data exchange and without any
 need for servers to store information about the clients.
 
@@ -174,7 +174,7 @@ extension is also defined for servers implememnting
 Several low level mechanisms could be defined to fulfill the
 requirements for efficient client/server txid synchronization.
 This document defines two such mechanisms, the 'etag txid' mechanism ({{sec-etag}})
-and the 'last-modified txid' mechanism ({{sec-lm}}). However, additional txid mechanisms may be defined in the future. Scuh mechanisms have to adhere
+and the 'last-modified txid' mechanism ({{sec-lm}}). However, additional txid mechanisms may be defined in the future. Such mechanisms have to adhere
 to the principles defined in {{sec-principles}}.
 
 This document is divided into a two
@@ -2587,7 +2587,7 @@ registry:
 ~~~
 Capability: :txid
 Capability Identifier: urn:ietf:params:netconf:capability:txid:1.0
-Reference: RFC XXXX  
+Reference: RFC XXXX
 ~~~
 
 ## IETF XML Registry
@@ -2616,7 +2616,7 @@ subregistry within the "IETF XML Registry" {{RFC3688}}:
 ## YANG Module Names
 
 This document requests IANA to register three module names in the "YANG
-Module Names" subregistry {{!RFC6020}} within the "YANG Parameters"
+Module Names" subregistry {{RFC6020}} within the "YANG Parameters"
 registry.
 
 ~~~
