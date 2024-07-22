@@ -170,7 +170,7 @@ configuration in a NETCONF server.
 
 For servers implementing YANG-Push, an extension for conveying txid
 updates as part of subscription updates is also defined.  A similar
-extension is also defined for servers implememnting
+extension is also defined for servers implementing
 "Comparison of NMDA Datastores".
 
 Several low level mechanisms could be defined to fulfill the
