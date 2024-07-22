@@ -2650,6 +2650,13 @@ registry.
 
 # Changes
 
+## Major changes in -06 since -05
+
+* Many language, style, spelling and formatting improvements thanks
+to reviews by Reshad Rahman and Med Boucadair
+
+* Clarified Txid History Size Consideration example
+
 ## Major changes in -05 since -04
 
 * Corrected namespace for reference to elements in ietf-yang-push
@@ -2834,6 +2841,7 @@ etags.
 {:numbered="false"}
 
 The author wishes to thank Benoît Claise for making this work happen,
-and the following individuals, who all provided helpful comments:
+and the following individuals, who all provided helpful comments
+and reviews:
 Per Andersson, James Cumming, Kent Watsen, Andy Bierman, Robert Wilton,
-Qiufang Ma, Jason Sterne and Robert Varga.
+Qiufang Ma, Jason Sterne, Robert Varga, Reshad Rahman and Med Boucadair.
