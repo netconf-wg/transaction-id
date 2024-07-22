@@ -21,7 +21,7 @@ Abstract
 
    Rereading the entire data store and analyzing the response for
    changes is inefficient for synchronization.  This document specifies
-   an NETCONF extension that allows clients and servers to keep
+   a NETCONF extension that allows clients and servers to keep
    synchronized with a much smaller data exchange and without any need
    for servers to store information about the clients.
 
@@ -112,6 +112,9 @@ Table of Contents
        7.1.1.  Hash-based Txid Algorithms
      7.2.  Unchanged Configuration
    8.  IANA Considerations
+     8.1.  NETCONF Capability URN
+     8.2.  IETF XML Registry
+     8.3.  YANG Module Names
    9.  Changes
      9.1.  Major changes in -05 since -04
      9.2.  Major changes in -04 since -03
@@ -233,7 +236,7 @@ Table of Contents
    document defines two such mechanisms, the 'etag txid' mechanism
    (Section 4.1) and the 'last-modified txid' mechanism (Section 4.2).
    However, additional txid mechanisms may be defined in the future.
-   Scuh mechanisms have to adhere to the principles defined in
+   Such mechanisms have to adhere to the principles defined in
    Section 3.2.
 
    This document is divided into a two main parts; the first part
@@ -3017,57 +3020,60 @@ Table of Contents
 
 8.  IANA Considerations
 
-   This document registers the following capability identifier URN in
-   the 'Network Configuration Protocol (NETCONF) Capability URNs'
-   registry:
+8.1.  NETCONF Capability URN
 
-     urn:ietf:params:netconf:capability:txid:1.0
+   This document requets IANA to register the following capability
+   identifier URN in the 'Network Configuration Protocol (NETCONF)
+   Capability URNs' registry:
 
-   This document registers four XML namespace URNs in the 'IETF XML
-   registry', following the format defined in [RFC3688].
+   Capability: :txid
+   Capability Identifier: urn:ietf:params:netconf:capability:txid:1.0
+   Reference: RFC XXXX
+
+8.2.  IETF XML Registry
+
+   This document request IANA to register four XML namespace URIs in the
+   the "ns" subregistry within the "IETF XML Registry" [RFC3688]:
 
      URI: urn:ietf:params:xml:ns:netconf:txid:1.0
-
-     URI: urn:ietf:params:xml:ns:yang:ietf-netconf-txid
-
-     URI: urn:ietf:params:xml:ns:yang:ietf-netconf-txid-yang-push
-
-     URI: urn:ietf:params:xml:ns:yang:ietf-netconf-txid-nmda-compare
-
      Registrant Contact: The IESG.
-
      XML: N/A, the requested URIs are XML namespaces.
 
-   This document registers three module names in the 'YANG Module Names'
-   registry, defined in [RFC6020].
+     URI: urn:ietf:params:xml:ns:yang:ietf-netconf-txid
+     Registrant Contact: The IESG.
+     XML: N/A, the requested URIs are XML namespaces.
+
+     URI: urn:ietf:params:xml:ns:yang:ietf-netconf-txid-yang-push
+     Registrant Contact: The IESG.
+     XML: N/A, the requested URIs are XML namespaces.
+
+     URI: urn:ietf:params:xml:ns:yang:ietf-netconf-txid-nmda-compare
+     Registrant Contact: The IESG.
+     XML: N/A, the requested URIs are XML namespaces.
+
+8.3.  YANG Module Names
+
+   This document requests IANA to register three module names in the
+   "YANG Module Names" subregistry [RFC6020] within the "YANG
+   Parameters" registry.
 
      name: ietf-netconf-txid
-
      prefix: ietf-netconf-txid
-
      namespace: urn:ietf:params:xml:ns:yang:ietf-netconf-txid
-
+     maintained by IANA? N
      RFC: XXXX
-
-   and
 
      name: ietf-netconf-txid-yp
-
      prefix: ietf-netconf-txid-yp
-
      namespace: urn:ietf:params:xml:ns:yang:ietf-netconf-txid-yang-push
-
+     maintained by IANA? N
      RFC: XXXX
 
-   and
-
      name: ietf-netconf-txid-nmda-compare
-
      prefix: ietf-netconf-txid-nmda-compare
-
      namespace:
        urn:ietf:params:xml:ns:yang:ietf-netconf-txid-nmda-compare
-
+     maintained by IANA? N
      RFC: XXXX
 
 9.  Changes

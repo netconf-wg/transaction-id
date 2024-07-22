@@ -13,7 +13,7 @@ data in a server may be very large, while data store changes typically
 are small when observed at typical client resynchronization intervals. 
        Rereading the entire data store and analyzing the response for changes
 is inefficient for synchronization.  This document
-specifies an NETCONF extension that allows clients and servers to
+specifies a NETCONF extension that allows clients and servers to
 keep synchronized with a much smaller data exchange and without any
 need for servers to store information about the clients. 
     " name="description">
@@ -1081,7 +1081,7 @@ data in a server may be very large, while data store changes typically
 are small when observed at typical client resynchronization intervals.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
 <p id="section-abstract-2">Rereading the entire data store and analyzing the response for changes
 is inefficient for synchronization.  This document
-specifies an NETCONF extension that allows clients and servers to
+specifies a NETCONF extension that allows clients and servers to
 keep synchronized with a much smaller data exchange and without any
 need for servers to store information about the clients.<a href="#section-abstract-2" class="pilcrow">¶</a></p>
 </section>
@@ -1287,6 +1287,17 @@ need for servers to store information about the clients.<a href="#section-abstra
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8">
             <p id="section-toc.1-1.8.1"><a href="#section-8" class="auto internal xref">8</a>.  <a href="#name-iana-considerations" class="internal xref">IANA Considerations</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8.2.1">
+                <p id="section-toc.1-1.8.2.1.1"><a href="#section-8.1" class="auto internal xref">8.1</a>.  <a href="#name-netconf-capability-urn" class="internal xref">NETCONF Capability URN</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8.2.2">
+                <p id="section-toc.1-1.8.2.2.1"><a href="#section-8.2" class="auto internal xref">8.2</a>.  <a href="#name-ietf-xml-registry" class="internal xref">IETF XML Registry</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8.2.3">
+                <p id="section-toc.1-1.8.2.3.1"><a href="#section-8.3" class="auto internal xref">8.3</a>.  <a href="#name-yang-module-names" class="internal xref">YANG Module Names</a></p>
+</li>
+            </ul>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9">
             <p id="section-toc.1-1.9.1"><a href="#section-9" class="auto internal xref">9</a>.  <a href="#name-changes" class="internal xref">Changes</a></p>
@@ -1466,7 +1477,7 @@ extension is also defined for servers implememnting
 <p id="section-3-3">Several low level mechanisms could be defined to fulfill the
 requirements for efficient client/server txid synchronization.
 This document defines two such mechanisms, the 'etag txid' mechanism (<a href="#sec-etag" class="auto internal xref">Section 4.1</a>)
-and the 'last-modified txid' mechanism (<a href="#sec-lm" class="auto internal xref">Section 4.2</a>). However, additional txid mechanisms may be defined in the future. Scuh mechanisms have to adhere
+and the 'last-modified txid' mechanism (<a href="#sec-lm" class="auto internal xref">Section 4.2</a>). However, additional txid mechanisms may be defined in the future. Such mechanisms have to adhere
 to the principles defined in <a href="#sec-principles" class="auto internal xref">Section 3.2</a>.<a href="#section-3-3" class="pilcrow">¶</a></p>
 <p id="section-3-4">This document is divided into a two
 main parts; the first part discusses the txid mechanism in an abstract,
@@ -4483,69 +4494,82 @@ the actual configuration.<a href="#section-7.2-2" class="pilcrow">¶</a></p>
       <h2 id="name-iana-considerations">
 <a href="#section-8" class="section-number selfRef">8. </a><a href="#name-iana-considerations" class="section-name selfRef">IANA Considerations</a>
       </h2>
-<p id="section-8-1">This document registers the following capability identifier URN in
+<div id="netconf-capability-urn">
+<section id="section-8.1">
+        <h3 id="name-netconf-capability-urn">
+<a href="#section-8.1" class="section-number selfRef">8.1. </a><a href="#name-netconf-capability-urn" class="section-name selfRef">NETCONF Capability URN</a>
+        </h3>
+<p id="section-8.1-1">This document requets IANA to register the following capability identifier URN in
 the 'Network Configuration Protocol (NETCONF) Capability URNs'
-registry:<a href="#section-8-1" class="pilcrow">¶</a></p>
-<div class="alignLeft art-text artwork" id="section-8-2">
+registry:<a href="#section-8.1-1" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-8.1-2">
 <pre>
-  urn:ietf:params:netconf:capability:txid:1.0
-</pre><a href="#section-8-2" class="pilcrow">¶</a>
+Capability: :txid
+Capability Identifier: urn:ietf:params:netconf:capability:txid:1.0
+Reference: RFC XXXX
+</pre><a href="#section-8.1-2" class="pilcrow">¶</a>
 </div>
-<p id="section-8-3">This document registers four XML namespace URNs in the 'IETF XML
-registry', following the format defined in
-<span>[<a href="#RFC3688" class="cite xref">RFC3688</a>]</span>.<a href="#section-8-3" class="pilcrow">¶</a></p>
-<div class="alignLeft art-text artwork" id="section-8-4">
+</section>
+</div>
+<div id="ietf-xml-registry">
+<section id="section-8.2">
+        <h3 id="name-ietf-xml-registry">
+<a href="#section-8.2" class="section-number selfRef">8.2. </a><a href="#name-ietf-xml-registry" class="section-name selfRef">IETF XML Registry</a>
+        </h3>
+<p id="section-8.2-1">This document request IANA to register four XML namespace URIs in the the "ns"
+subregistry within the "IETF XML Registry" <span>[<a href="#RFC3688" class="cite xref">RFC3688</a>]</span>:<a href="#section-8.2-1" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-8.2-2">
 <pre>
   URI: urn:ietf:params:xml:ns:netconf:txid:1.0
+  Registrant Contact: The IESG.
+  XML: N/A, the requested URIs are XML namespaces.
 
   URI: urn:ietf:params:xml:ns:yang:ietf-netconf-txid
+  Registrant Contact: The IESG.
+  XML: N/A, the requested URIs are XML namespaces.
 
   URI: urn:ietf:params:xml:ns:yang:ietf-netconf-txid-yang-push
+  Registrant Contact: The IESG.
+  XML: N/A, the requested URIs are XML namespaces.
 
   URI: urn:ietf:params:xml:ns:yang:ietf-netconf-txid-nmda-compare
-
   Registrant Contact: The IESG.
-
   XML: N/A, the requested URIs are XML namespaces.
-</pre><a href="#section-8-4" class="pilcrow">¶</a>
+</pre><a href="#section-8.2-2" class="pilcrow">¶</a>
 </div>
-<p id="section-8-5">This document registers three module names in the 'YANG Module Names'
-registry, defined in <span>[<a href="#RFC6020" class="cite xref">RFC6020</a>]</span>.<a href="#section-8-5" class="pilcrow">¶</a></p>
-<div class="alignLeft art-text artwork" id="section-8-6">
+</section>
+</div>
+<div id="yang-module-names">
+<section id="section-8.3">
+        <h3 id="name-yang-module-names">
+<a href="#section-8.3" class="section-number selfRef">8.3. </a><a href="#name-yang-module-names" class="section-name selfRef">YANG Module Names</a>
+        </h3>
+<p id="section-8.3-1">This document requests IANA to register three module names in the "YANG
+Module Names" subregistry <span>[<a href="#RFC6020" class="cite xref">RFC6020</a>]</span> within the "YANG Parameters"
+registry.<a href="#section-8.3-1" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-8.3-2">
 <pre>
   name: ietf-netconf-txid
-
   prefix: ietf-netconf-txid
-
   namespace: urn:ietf:params:xml:ns:yang:ietf-netconf-txid
-
+  maintained by IANA? N
   RFC: XXXX
-</pre><a href="#section-8-6" class="pilcrow">¶</a>
-</div>
-<p id="section-8-7">and<a href="#section-8-7" class="pilcrow">¶</a></p>
-<div class="alignLeft art-text artwork" id="section-8-8">
-<pre>
+
   name: ietf-netconf-txid-yp
-
   prefix: ietf-netconf-txid-yp
-
   namespace: urn:ietf:params:xml:ns:yang:ietf-netconf-txid-yang-push
-
+  maintained by IANA? N
   RFC: XXXX
-</pre><a href="#section-8-8" class="pilcrow">¶</a>
-</div>
-<p id="section-8-9">and<a href="#section-8-9" class="pilcrow">¶</a></p>
-<div class="alignLeft art-text artwork" id="section-8-10">
-<pre>
+
   name: ietf-netconf-txid-nmda-compare
-
   prefix: ietf-netconf-txid-nmda-compare
-
   namespace:
     urn:ietf:params:xml:ns:yang:ietf-netconf-txid-nmda-compare
-
+  maintained by IANA? N
   RFC: XXXX
-</pre><a href="#section-8-10" class="pilcrow">¶</a>
+</pre><a href="#section-8.3-2" class="pilcrow">¶</a>
+</div>
+</section>
 </div>
 </section>
 </div>
