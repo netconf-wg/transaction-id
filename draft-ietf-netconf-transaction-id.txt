@@ -116,15 +116,16 @@ Table of Contents
      8.2.  IETF XML Registry
      8.3.  YANG Module Names
    9.  Changes
-     9.1.  Major changes in -05 since -04
-     9.2.  Major changes in -04 since -03
-     9.3.  Major changes in -03 since -02
-     9.4.  Major changes in -02 since -01
-     9.5.  Major changes in -01 since -00
-     9.6.  Major changes in draft-ietf-netconf-transaction-id-00 since
+     9.1.  Major changes in -06 since -05
+     9.2.  Major changes in -05 since -04
+     9.3.  Major changes in -04 since -03
+     9.4.  Major changes in -03 since -02
+     9.5.  Major changes in -02 since -01
+     9.6.  Major changes in -01 since -00
+     9.7.  Major changes in draft-ietf-netconf-transaction-id-00 since
            -02
-     9.7.  Major changes in -02 since -01
-     9.8.  Major changes in -01 since -00
+     9.8.  Major changes in -02 since -01
+     9.9.  Major changes in -01 since -00
    10. References
      10.1.  Normative References
      10.2.  Informative References
@@ -3083,17 +3084,24 @@ Table of Contents
 
 9.  Changes
 
-9.1.  Major changes in -05 since -04
+9.1.  Major changes in -06 since -05
+
+   *  Many language, style, spelling and formatting improvements thanks
+      to reviews by Reshad Rahman and Med Boucadair
+
+   *  Clarified Txid History Size Consideration example
+
+9.2.  Major changes in -05 since -04
 
    *  Corrected namespace for reference to elements in ietf-yang-push
 
-9.2.  Major changes in -04 since -03
+9.3.  Major changes in -04 since -03
 
    *  Updated security considerations.
 
    *  Added several normative RFC references.
 
-9.3.  Major changes in -03 since -02
+9.4.  Major changes in -03 since -02
 
    *  Updated language slightly regarding format of etag values, and
       some recommendations for implementors that support etags in
@@ -3104,7 +3112,7 @@ Table of Contents
 
    *  Corrected the YANG-push namespace reference.
 
-9.4.  Major changes in -02 since -01
+9.5.  Major changes in -02 since -01
 
    *  Added optional to implement Txid History concept in order to make
       the algorithm both more efficient and less verbose.  Servers may
@@ -3124,7 +3132,7 @@ Table of Contents
       netconf-txid:last-modified in order to reduce redundant mentions
       of "txid".
 
-9.5.  Major changes in -01 since -00
+9.6.  Major changes in -01 since -00
 
    *  Changed YANG-push txid mechanism to use a simple leaf rather than
       an attribute to convey txid information.  This is preferable since
@@ -3160,7 +3168,7 @@ Table of Contents
 
    *  Corrected acl data model examples to conform to their YANG module.
 
-9.6.  Major changes in draft-ietf-netconf-transaction-id-00 since -02
+9.7.  Major changes in draft-ietf-netconf-transaction-id-00 since -02
 
    *  Changed the logic around how txids are handled in the candidate
       datastore, both when reading (get-config, get-data) and writing
@@ -3189,7 +3197,7 @@ Table of Contents
    *  Corrected a logic error in the second figure (figure 6) in the
       "Conditional Transactions" section
 
-9.7.  Major changes in -02 since -01
+9.8.  Major changes in -02 since -01
 
    *  A last-modified txid mechanism has been added (back).  This
       mechanism aligns well with the Last-Modified mechanism defined in
@@ -3226,7 +3234,7 @@ Table of Contents
       are included in the source document.  These modules can be
       compiled as proper modules without any extraction tools.
 
-9.8.  Major changes in -01 since -00
+9.9.  Major changes in -01 since -00
 
    *  Updated the text on numerous points in order to answer questions
       that appeared on the mailing list.
@@ -3369,9 +3377,10 @@ Table of Contents
 Acknowledgments
 
    The author wishes to thank Benoît Claise for making this work happen,
-   and the following individuals, who all provided helpful comments: Per
-   Andersson, James Cumming, Kent Watsen, Andy Bierman, Robert Wilton,
-   Qiufang Ma, Jason Sterne and Robert Varga.
+   and the following individuals, who all provided helpful comments and
+   reviews: Per Andersson, James Cumming, Kent Watsen, Andy Bierman,
+   Robert Wilton, Qiufang Ma, Jason Sterne, Robert Varga, Reshad Rahman
+   and Med Boucadair.
 
 Author's Address
 
