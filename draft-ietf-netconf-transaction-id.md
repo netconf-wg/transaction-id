@@ -663,31 +663,33 @@ detected."}
 
 ### Txid History Size Consideration {#sec-histo-size}
 
-It may be tempting for a client implementor to send only the top
-level c-txid value for the tree being edited.  In most cases, that
+It may be tempting for a client implementor to send a single
+c-txid value for the tree being edited.  In many cases, that
 would certainly work just fine.  This is a way for the client to
 request the server to go ahead with the change as long as there
-has not been any changes more recent than the client provided c-txid.
+has not been any changes more recent in the subtree below the
+c-txid provided.
 
 Here the client is sending the same change as in
-[the example above](#base-edit-config), but with only one top level
-c-txid value.
+[the example above](#base-edit-config), but with only a single
+c-txid value that reflects the latest txid the client is
+aware of anywhere in the configuration.
 
 ~~~ call-flow
      Client                                            Server
        |                                                 |
        |   ------------------------------------------>   |
        |   edit-config (request new txid in response)    |
-       |     config (txid: 5152)                         |
+       |     config                                      |
        |       acls                                      |
-       |         acl A1                                  |
+       |         acl A1 (txid: 8602)                     |
        |           aces                                  |
        |             ace R1                              |
        |               matches ipv4 protocol 6           |
        |               actions forwarding accept         |
        |                                                 |
        |   <------------------------------------------   |
-       |   ok (txid: 7688)                               |
+       |   ok (txid: 9009)                               |
        v                                                 v
 ~~~
 {: title="Conditional transaction towards the Running datastore
@@ -695,17 +697,23 @@ successfully executed.  As all the c-txid values specified by the
 client were the same or more recent in the server's Txid History,
 so the transaction was successfully executed."}
 
-This approach works well because the top level value is inherited
-down in the child nodes and the server finds this value to either
-match exactly or be a more recent s-txid value in the server's Txid
-History.
+This approach works well in the example above because the c-txid
+value 8602 is inherited down in the child nodes, from acl A1 to aces,
+ace R1, and onwards. The server compares the c-txid value 8602
+with the s-txid value in the data tree.  The server finds that the
+values do not match (e.g., s-txid 7688 for ace R1 is not equal to
+c-txid 8602), but finds that 8602 is a more recent txid than 7688
+by looking in the server's Txid History, and therefore accepts the
+transaction.
 
-The only caveat is that by relying on the server's Txid History being
-long enough, the change could be rejected if the top level c-txid has
-fallen out of the server's Txid History.  Some servers may have a
-Txid History size of zero.  A client specifying a single top-level
-c-txid value towards such a server would not be able to get the
-transaction accepted.
+Clients relying on the server's Txid History being long enough,
+could see their changes rejected if some of the s-txid have
+fallen out of the server's Txid History (e.g., if the txid 7688
+happened so long ago that the it is no longer in the server's
+Txid History).  Some servers may have a Txid History size of zero.
+A client specifying a single c-txid value for a change like the one
+above towards such a server would not be able to get the transaction
+accepted.
 
 ## Candidate Datastore Transactions
 
