@@ -1154,7 +1154,7 @@ need for servers to store information about the clients.<a href="#section-abstra
             <p id="section-toc.1-1.3.1"><a href="#section-3" class="auto internal xref">3</a>.  <a href="#name-netconf-txid-extension" class="internal xref">NETCONF Txid Extension</a></p>
 <ul class="compact toc ulBare ulEmpty">
 <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.1">
-                <p id="section-toc.1-1.3.2.1.1" class="keepWithNext"><a href="#section-3.1" class="auto internal xref">3.1</a>.  <a href="#name-use-cases" class="internal xref">Use Cases</a></p>
+                <p id="section-toc.1-1.3.2.1.1" class="keepWithNext"><a href="#section-3.1" class="auto internal xref">3.1</a>.  <a href="#name-sample-use-cases" class="internal xref">Sample Use Cases</a></p>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.2">
                 <p id="section-toc.1-1.3.2.2.1"><a href="#section-3.2" class="auto internal xref">3.2</a>.  <a href="#name-general-txid-principles" class="internal xref">General Txid Principles</a></p>
@@ -1172,10 +1172,10 @@ need for servers to store information about the clients.<a href="#section-abstra
                 <p id="section-toc.1-1.3.2.6.1"><a href="#section-3.6" class="auto internal xref">3.6</a>.  <a href="#name-conditional-transactions" class="internal xref">Conditional Transactions</a></p>
 <ul class="compact toc ulBare ulEmpty">
 <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.6.2.1">
-                    <p id="section-toc.1-1.3.2.6.2.1.1"><a href="#section-3.6.1" class="auto internal xref">3.6.1</a>.  <a href="#name-error-response-on-out-of-ba" class="internal xref">Error response on Out of band change</a></p>
+                    <p id="section-toc.1-1.3.2.6.2.1.1"><a href="#section-3.6.1" class="auto internal xref">3.6.1</a>.  <a href="#name-error-response-on-out-of-ba" class="internal xref">Error Response on Out-of-Band Changes</a></p>
 </li>
                   <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.6.2.2">
-                    <p id="section-toc.1-1.3.2.6.2.2.1"><a href="#section-3.6.2" class="auto internal xref">3.6.2</a>.  <a href="#name-txid-history-size-considera" class="internal xref">Txid History size consideration</a></p>
+                    <p id="section-toc.1-1.3.2.6.2.2.1"><a href="#section-3.6.2" class="auto internal xref">3.6.2</a>.  <a href="#name-txid-history-size-considera" class="internal xref">Txid History Size Consideration</a></p>
 </li>
                 </ul>
 </li>
@@ -1200,10 +1200,10 @@ need for servers to store information about the clients.<a href="#section-abstra
             <p id="section-toc.1-1.4.1"><a href="#section-4" class="auto internal xref">4</a>.  <a href="#name-txid-mechanisms" class="internal xref">Txid Mechanisms</a></p>
 <ul class="compact toc ulBare ulEmpty">
 <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.1">
-                <p id="section-toc.1-1.4.2.1.1"><a href="#section-4.1" class="auto internal xref">4.1</a>.  <a href="#name-the-etag-attribute-txid-mec" class="internal xref">The etag attribute txid mechanism</a></p>
+                <p id="section-toc.1-1.4.2.1.1"><a href="#section-4.1" class="auto internal xref">4.1</a>.  <a href="#name-the-etag-attribute-txid-mec" class="internal xref">The ETag Attribute txid Mechanism</a></p>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.2">
-                <p id="section-toc.1-1.4.2.2.1"><a href="#section-4.2" class="auto internal xref">4.2</a>.  <a href="#name-the-last-modified-attribute" class="internal xref">The last-modified attribute txid mechanism</a></p>
+                <p id="section-toc.1-1.4.2.2.1"><a href="#section-4.2" class="auto internal xref">4.2</a>.  <a href="#name-the-last-modified-attribute" class="internal xref">The Last-Modified Attribute txid Mechanism</a></p>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.3">
                 <p id="section-toc.1-1.4.2.3.1"><a href="#section-4.3" class="auto internal xref">4.3</a>.  <a href="#name-common-features-to-both-eta" class="internal xref">Common features to both etag and last-modified txid mechanisms</a></p>
@@ -1455,99 +1455,100 @@ another txid.<a href="#section-2-4.12.1" class="pilcrow">¶</a></p>
 <a href="#section-3" class="section-number selfRef">3. </a><a href="#name-netconf-txid-extension" class="section-name selfRef">NETCONF Txid Extension</a>
       </h2>
 <p id="section-3-1">This document describes a NETCONF extension which modifies the
-behavior of get-config, get-data, edit-config, edit-data,
-discard-changes, copy-config, delete-config and commit such
+behavior of <code>&lt;get-config&gt;</code>, <code>&lt;get-data&gt;</code>, <code>&lt;edit-config&gt;</code>, <code>&lt;edit-data&gt;</code>,
+<code>&lt;discard-changes&gt;</code>, <code>&lt;copy-config&gt;</code>, <code>&lt;delete-config&gt;</code>, and <code>&lt;commit&gt;</code> operations such
 that clients are able to conditionally retrieve and update the
 configuration in a NETCONF server.<a href="#section-3-1" class="pilcrow">¶</a></p>
-<p id="section-3-2">For servers implementing YANG-Push, an extension for conveying txid
+<p id="section-3-2">For servers implementing YANG-Push <span>[<a href="#RFC8641" class="cite xref">RFC8641</a>]</span>, an extension for conveying txid
 updates as part of subscription updates is also defined.  A similar
-extension is also defined for servers implementing
-"Comparison of NMDA Datastores".<a href="#section-3-2" class="pilcrow">¶</a></p>
+extension is also defined for servers implememnting
+"Comparison of NMDA Datastores" <span>[<a href="#RFC9144" class="cite xref">RFC9144</a>]</span>.<a href="#section-3-2" class="pilcrow">¶</a></p>
 <p id="section-3-3">Several low level mechanisms could be defined to fulfill the
-requirements for efficient client-server txid synchronization.
-This document defines two such mechanisms, the etag txid mechanism
-and the last-modified txid mechanism. Additional mechanisms could
-be added in future.  This document is therefore divided into a two
-parts; the first part discusses the txid mechanism in an abstract,
+requirements for efficient client/server txid synchronization.
+This document defines two such mechanisms, the 'etag txid' mechanism (<a href="#sec-etag" class="auto internal xref">Section 4.1</a>)
+and the 'last-modified txid' mechanism (<a href="#sec-lm" class="auto internal xref">Section 4.2</a>). However, additional txid mechanisms may be defined in the future. Scuh mechanisms have to adhere
+to the principles defined in <a href="#sec-principles" class="auto internal xref">Section 3.2</a>.<a href="#section-3-3" class="pilcrow">¶</a></p>
+<p id="section-3-4">This document is divided into a two
+main parts; the first part discusses the txid mechanism in an abstract,
 protocol-neutral way.  The second part,
 <span><a href="#txid-mechanisms" class="internal xref">Txid Mechanisms</a> (<a href="#txid-mechanisms" class="auto internal xref">Section 4</a>)</span>, then adds the protocol layer,
-and provides concrete encoding examples.<a href="#section-3-3" class="pilcrow">¶</a></p>
-<div id="use-cases">
+and provides concrete encoding examples.<a href="#section-3-4" class="pilcrow">¶</a></p>
+<div id="sample-use-cases">
 <section id="section-3.1">
-        <h3 id="name-use-cases">
-<a href="#section-3.1" class="section-number selfRef">3.1. </a><a href="#name-use-cases" class="section-name selfRef">Use Cases</a>
+        <h3 id="name-sample-use-cases">
+<a href="#section-3.1" class="section-number selfRef">3.1. </a><a href="#name-sample-use-cases" class="section-name selfRef">Sample Use Cases</a>
         </h3>
-<p id="section-3.1-1">The common use cases for txid mecahnisms are briefly discussed here.<a href="#section-3.1-1" class="pilcrow">¶</a></p>
+<p id="section-3.1-1">The common use cases for txid mecahnisms are briefly discussed in this section.<a href="#section-3.1-1" class="pilcrow">¶</a></p>
 <span class="break"></span><dl class="dlParallel" id="section-3.1-2">
-          <dt id="section-3.1-2.1">Initial configuration retrieval</dt>
+          <dt id="section-3.1-2.1">Initial configuration retrieval:</dt>
           <dd style="margin-left: 1.5em" id="section-3.1-2.2">
-            <p id="section-3.1-2.2.1">When the client initially connects to a server, it may be interested
+            <p id="section-3.1-2.2.1">When a client initially connects to a server, it may be interested
 to acquire a current view of (parts of) the server's configuration.
 In order to be able to efficiently detect changes later, it may also
 be interested to store meta level txid information for
 subtrees of the configuration.<a href="#section-3.1-2.2.1" class="pilcrow">¶</a></p>
 </dd>
           <dd class="break"></dd>
-<dt id="section-3.1-2.3">Subsequent configuration retrieval</dt>
+<dt id="section-3.1-2.3">Subsequent configuration retrieval:</dt>
           <dd style="margin-left: 1.5em" id="section-3.1-2.4">
-            <p id="section-3.1-2.4.1">When a client needs to reread (parts of) the server's configuration,
-it may be interested to leverage the txid meta data it has
+            <p id="section-3.1-2.4.1">When a client needs to retrieve again (parts of) the server's configuration,
+it may be interested to leverage the txid metadata it has
 stored by requesting the server to prune the response so that it does
 not repeat configuration data that the client is already aware of.<a href="#section-3.1-2.4.1" class="pilcrow">¶</a></p>
 </dd>
           <dd class="break"></dd>
-<dt id="section-3.1-2.5">Configuration update with txid return</dt>
+<dt id="section-3.1-2.5">Configuration update with txid return:</dt>
           <dd style="margin-left: 1.5em" id="section-3.1-2.6">
             <p id="section-3.1-2.6.1">When a client issues a transaction towards a server, it may be
-interested to also learn the new txid meta data the server
+interested to also learn the new txid metadata that the server
 has stored for the updated parts of the configuration.<a href="#section-3.1-2.6.1" class="pilcrow">¶</a></p>
 </dd>
           <dd class="break"></dd>
-<dt id="section-3.1-2.7">Conditional configuration change</dt>
+<dt id="section-3.1-2.7">Conditional configuration change:</dt>
           <dd style="margin-left: 1.5em" id="section-3.1-2.8">
             <p id="section-3.1-2.8.1">When a client issues a transaction towards a server, it may specify
-txid meta data for the transaction in order to allow the server to
+txid metadata for the transaction in order to allow the server to
 verify that the client is up to date with any changes in the parts of
 the configuration that it is concerned with.  If the txid
-meta data in the server is different than the client expected, the
+metadata in the server is different than the client expected, the
 server rejects the transaction with a specific error message.<a href="#section-3.1-2.8.1" class="pilcrow">¶</a></p>
 </dd>
           <dd class="break"></dd>
-<dt id="section-3.1-2.9">Subscribe to configuration changes with txid return</dt>
+<dt id="section-3.1-2.9">Subscribe to configuration changes with txid return:</dt>
           <dd style="margin-left: 1.5em" id="section-3.1-2.10">
             <p id="section-3.1-2.10.1">When a client subscribes to configuration change updates through
-YANG-Push, it may be interested to also learn the the updated txid
-meta data for the changed data trees.<a href="#section-3.1-2.10.1" class="pilcrow">¶</a></p>
+YANG-Push, it may be interested to also learn the updated txid
+metadata for the changed data trees.<a href="#section-3.1-2.10.1" class="pilcrow">¶</a></p>
 </dd>
         <dd class="break"></dd>
 </dl>
 </section>
 </div>
-<div id="general-txid-principles">
+<div id="sec-principles">
 <section id="section-3.2">
         <h3 id="name-general-txid-principles">
 <a href="#section-3.2" class="section-number selfRef">3.2. </a><a href="#name-general-txid-principles" class="section-name selfRef">General Txid Principles</a>
         </h3>
 <p id="section-3.2-1">All servers implementing a txid mechanism MUST maintain a top level
-server side txid meta data value for each configuration datastore
-supported by the server.  Server side txid is often abbreviated s-txid.
+server side txid (s-txid) metadata value for each configuration datastore
+supported by the server.
 Txid mechanism implementations MAY also maintain txid
-meta data values for nodes deeper in the YANG data tree.  The nodes
+metadata values for nodes deeper in the YANG data tree.  The nodes
 for which the server maintains txids are collectively referred to as
 the "Versioned Nodes".<a href="#section-3.2-1" class="pilcrow">¶</a></p>
-<p id="section-3.2-2">Server implementors MAY use the YANG extension statement
+<p id="section-3.2-2">Server implementations MAY use the YANG extension statement
 ietf-netconf-txid:versioned-node to inform potential clients about
 which YANG nodes the server maintains a txid value for.  Another way
 to discover (a partial) set of Versioned Nodes is for a client to
 request the current configuration with txids.  The returned
 configuration will then have the Versioned Nodes decorated with their
 txid values.<a href="#section-3.2-2" class="pilcrow">¶</a></p>
-<p id="section-3.2-3">Regardless of whether the server declares the Versioned Nodes or not,
+<p id="section-3.2-3">Regardless of whether a server declares the Versioned Nodes or not,
 the set of Versioned Nodes in the server's YANG tree MUST remain
 constant, except at system redefining events, such as software upgrades
 or entitlement installations or removals.<a href="#section-3.2-3" class="pilcrow">¶</a></p>
 <p id="section-3.2-4">The server returning txid values for the Versioned Nodes
-MUST ensure the txid values are changed every time there has
+MUST ensure that the txid values are changed every time there has
 been a configuration change at or below the node associated with
 the txid value.  This means any update of a config true node will
 result in a new txid value for all ancestor Versioned Nodes, up
@@ -1557,8 +1558,8 @@ nodes that change as a result of a configuration change, and their
 ancestors, regardless
 of source, even if the changed nodes are not explicitly part
 of the change payload.  An example of this is dependent data under
-YANG <span>[<a href="#RFC7950" class="cite xref">RFC7950</a>]</span> when- or choice-statements.<a href="#section-3.2-5" class="pilcrow">¶</a></p>
-<p id="section-3.2-6">The server MUST NOT change the txid value of a versioned node
+YANG <span>[<a href="#RFC7950" class="cite xref">RFC7950</a>]</span> "when" or "choice" statements.<a href="#section-3.2-5" class="pilcrow">¶</a></p>
+<p id="section-3.2-6">A server MUST NOT change the txid value of a versioned node
 unless the node itself or a child node of that node has
 been changed.  The server MUST NOT change any txid values due to
 changes in config false data, or any kind of metadata that the
@@ -1570,12 +1571,12 @@ server may maintain for YANG data tree nodes.<a href="#section-3.2-6" class="pil
         <h3 id="name-initial-configuration-retri">
 <a href="#section-3.3" class="section-number selfRef">3.3. </a><a href="#name-initial-configuration-retri" class="section-name selfRef">Initial Configuration Retrieval</a>
         </h3>
-<p id="section-3.3-1">When a NETCONF server receives a get-config or get-data request
-containing requests for txid values, it MUST, in the reply, return
+<p id="section-3.3-1">When a NETCONF server receives a <code>&lt;get-config&gt;</code> or <code>&lt;get-data&gt;</code> request (<span><a href="https://rfc-editor.org/rfc/rfc8526#section-3.1.1" class="relref">Section 3.1.1</a> of [<a href="#RFC8526" class="cite xref">RFC8526</a>]</span>)
+containing requests for txid values, and assuming no authorization or validation error is encountered,  it MUST, in the reply, return
 txid values for all Versioned Nodes below the point requested by
 the client.<a href="#section-3.3-1" class="pilcrow">¶</a></p>
 <p id="section-3.3-2">The exact encoding varies by mechanism, but all txid mechanisms
-would have a special "txid-request" txid value (e.g. "?") which is
+would have a special "txid-request" txid value (e.g., "?") which is
 guaranteed to never be used as a normal txid value.  Clients MAY use
 this special txid value associated with one or more nodes in the
 data tree to indicate to the server that they are interested in
@@ -1616,11 +1617,15 @@ txid values below that point of the data tree.<a href="#section-3.3-2" class="pi
 <a href="#name-initial-configuration-retrie" class="selfRef">Initial Configuration Retrieval.  The client annotated the get-config request itself with the txid request value, which makes the server return all txid values in the entire datastore, that also fall within the requested subtree filter.  The most recent change seems to have been an update to ace R8 and R9.</a>
           </figcaption></figure>
 </div>
-<p id="section-3.3-4">In the call flow examples in this document we are using a 4-digit,
+<ul class="normal ulEmpty">
+<li class="normal ulEmpty" id="section-3.3-4.1">
+            <p id="section-3.3-4.1.1">The call flow examples in this document use a 4-digit,
 monotonously increasing integer as txid.  This is convenient and
 enhances readability of the examples, but does not necessarily
-reflect a typical implementation.<a href="#section-3.3-4" class="pilcrow">¶</a></p>
-<p id="section-3.3-5">In principle, txid values are opaque strings that uniquely identify
+reflect a typical implementation.<a href="#section-3.3-4.1.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+<p id="section-3.3-5">Txid values are opaque strings that uniquely identify
 a particular configuration state.  Servers are expected to know which
 txid values it has used in the recent past, and in which order they
 were assigned to configuration change transactions.  This information
@@ -1629,14 +1634,16 @@ is known as the server's Txid History.<a href="#section-3.3-5" class="pilcrow">�
 implementor to decide, and a server MAY decide not to store any
 historical txid values at all.  The more txid values in the server's
 Txid History, the more efficient the client synchronization may be, as
-described in the coming sections.<a href="#section-3.3-6" class="pilcrow">¶</a></p>
+described in the coming sections. Servers may expose a configuration parameter
+to control the history depth. Such control depends on the local server capabilities.
+Refer to <a href="#sec-histo-size" class="auto internal xref">Section 3.6.2</a> for more considerations about history size.<a href="#section-3.3-6" class="pilcrow">¶</a></p>
 <p id="section-3.3-7">Some server implementors may decide to use a monotonically increasing
-integer as the txid value, or a timestamp.  Doing so obviously makes
+integer as the txid value or a timestamp.  Doing so obviously makes
 it very easy for the server to determine the sequence of historical
 transaction ids.<a href="#section-3.3-7" class="pilcrow">¶</a></p>
 <p id="section-3.3-8">Some server implementors may decide to use a completely different txid
 value sequence, to the point that the sequence may appear completely
-random to outside observers.  Clients MUST NOT generally assume that
+random to outside observers.  Clients MUST NOT assume or infer any semantic from txids. For example, clients must not assume that
 servers use a txid value scheme that reveals information about the
 temporal sequence of txid values.<a href="#section-3.3-8" class="pilcrow">¶</a></p>
 </section>
@@ -1647,23 +1654,24 @@ temporal sequence of txid values.<a href="#section-3.3-8" class="pilcrow">¶</a>
 <a href="#section-3.4" class="section-number selfRef">3.4. </a><a href="#name-subsequent-configuration-re" class="section-name selfRef">Subsequent Configuration Retrieval</a>
         </h3>
 <p id="section-3.4-1">Clients MAY request the server to return txid values in the response
-by adding one or more txid values received previously in get-config or
-get-data requests.  Txid values sent by a client are often abbreviated
+by adding one or more txid values received previously in <code>&lt;get-config&gt;</code> or
+<code>&lt;get-data&gt;</code> requests.  Txid values sent by a client are refered to as
 c-txid.<a href="#section-3.4-1" class="pilcrow">¶</a></p>
-<p id="section-3.4-2">When a client sends in a c-txid value of a node that matches the
+<p id="section-3.4-2">When a client sends a c-txid value of a node that matches the
 server's s-txid value for that Versioned Node, or matches a more recent
 s-txid value in the server's Txid History,
-the server prunes (does not return) that subtree from
-the response.  Since the client already knows the txid for this part
+the server prunes (i.e., does not return) that subtree from
+the response.  Since the client already knows the txid for that part
 of the data tree, or a txid that occurred more recently, it
 is obviosuly already up to date with that part of the configuration.
 Sending it again would be a waste of time and energy.<a href="#section-3.4-2" class="pilcrow">¶</a></p>
-<p id="section-3.4-3">The table below describes in detail how the client side (c-txid) and
+<p id="section-3.4-3"><a href="#tab-rules" class="auto internal xref">Table 1</a> describes in detail how the client side (c-txid) and
 server side txid (s-txid) values are determined and compared when the
 server processes each data tree reply node from a get-config or
 get-data request.<a href="#section-3.4-3" class="pilcrow">¶</a></p>
 <p id="section-3.4-4">Servers MUST process each of the config true nodes as follows:<a href="#section-3.4-4" class="pilcrow">¶</a></p>
-<span id="name-the-txid-rules-for-response"></span><table class="center" id="table-1">
+<span id="name-the-txid-rules-for-response"></span><div id="tab-rules">
+<table class="center" id="table-1">
           <caption>
 <a href="#table-1" class="selfRef">Table 1</a>:
 <a href="#name-the-txid-rules-for-response" class="selfRef">The Txid rules for response pruning.</a>
@@ -1703,6 +1711,7 @@ get-data request.<a href="#section-3.4-3" class="pilcrow">¶</a></p>
             </tr>
           </tbody>
         </table>
+</div>
 <p id="section-3.4-6">For list elements, pruning child nodes means that top-level
 key nodes MUST be included in the response, and other child nodes
 MUST NOT be included.  For containers, child nodes MUST NOT
@@ -1710,7 +1719,8 @@ be included.<a href="#section-3.4-6" class="pilcrow">¶</a></p>
 <p id="section-3.4-7">Here follows a couple of examples of how the rules above are applied.
 See <span><a href="#fig-baseline" class="internal xref">the example above</a> (<a href="#fig-baseline" class="auto internal xref">Figure 1</a>)</span> for the most recent server
 configuration state that the client is aware of, before this happens:<a href="#section-3.4-7" class="pilcrow">¶</a></p>
-<span id="name-response-pruning-client-sen"></span><figure id="figure-2">
+<span id="name-response-pruning-client-sen"></span><div id="fig-pruning">
+<figure id="figure-2">
           <div class="alignLeft art-call-flow art-text artwork" id="section-3.4-8.1">
 <pre>
      Client                                            Server
@@ -1732,6 +1742,7 @@ configuration state that the client is aware of, before this happens:<a href="#s
 <figcaption><a href="#figure-2" class="selfRef">Figure 2</a>:
 <a href="#name-response-pruning-client-sen" class="selfRef">Response Pruning.  Client sends get-config request with known txid values.  Server prunes response where the c-txid matches expectations.  In this case, the server had no changes, and pruned the response at the earliest point offered by the client.</a>
           </figcaption></figure>
+</div>
 <p id="section-3.4-9">In this case, the server's txid-based pruning saved a substantial
 amount of information that is already known by the client to be sent
 to and processed by the client.<a href="#section-3.4-9" class="pilcrow">¶</a></p>
@@ -1740,7 +1751,8 @@ configuration on the server.  This server has chosen to implement
 a Txid History with up to 5 entries.  The 5 most recently used
 s-txid values on this example server are currently: 4711, 5152, 5550,
 6614, 7770 (most recent).  Then a client sends this request:<a href="#section-3.4-10" class="pilcrow">¶</a></p>
-<span id="name-out-of-band-change-detected"></span><figure id="figure-3">
+<span id="name-out-of-band-change-detected"></span><div id="fig-oob-change">
+<figure id="figure-3">
           <div class="alignLeft art-call-flow art-text artwork" id="section-3.4-11.1">
 <pre>
      Client                                            Server
@@ -1768,7 +1780,8 @@ s-txid values on this example server are currently: 4711, 5152, 5550,
 <figcaption><a href="#figure-3" class="selfRef">Figure 3</a>:
 <a href="#name-out-of-band-change-detected" class="selfRef">Out of band change detected.  Client sends get-config request with known txid values.  Server provides updates only where changes have happened.</a>
           </figcaption></figure>
-<p id="section-3.4-12">In the example above, the server returns the acls container because
+</div>
+<p id="section-3.4-12">In the example depicted in <a href="#fig-oob-change" class="auto internal xref">Figure 3</a>, the server returns the acls container because
 the client supplied c-txid value (5152) differs from the s-txid value
 held by the server (6614), and 5152 is less recent in the server's
 Txid History than 6614.  The client is apparently unaware of the
@@ -1785,10 +1798,11 @@ ancestor Versioned Node (with txid 4711).<a href="#section-3.4-14" class="pilcro
 exactly match (5152). Finally, acl R9 is returned because of its less
 recent c-txid value given by the client (5152, on the closest ancestor
 acl A2) than the s-txid held on the server (6614).<a href="#section-3.4-15" class="pilcrow">¶</a></p>
-<p id="section-3.4-16">In the next example, the client specifies the c-txid for a node that
-the server does not maintain a s-txid for, i.e. it's not a
+<p id="section-3.4-16">In the example shown in <a href="#fig-vn" class="auto internal xref">Figure 4</a>, the client specifies the c-txid for a node that
+the server does not maintain a s-txid for, i.e., it is not a
 Versioned Node.<a href="#section-3.4-16" class="pilcrow">¶</a></p>
-<span id="name-versioned-nodes-server-look"></span><figure id="figure-4">
+<span id="name-versioned-nodes-server-look"></span><div id="fig-vn">
+<figure id="figure-4">
           <div class="alignLeft art-call-flow art-text artwork" id="section-3.4-17.1">
 <pre>
      Client                                            Server
@@ -1818,12 +1832,13 @@ Versioned Node.<a href="#section-3.4-16" class="pilcrow">¶</a></p>
 <figcaption><a href="#figure-4" class="selfRef">Figure 4</a>:
 <a href="#name-versioned-nodes-server-look" class="selfRef">Versioned Nodes.  Server lookup of dscp txid gives 4711, as closest ancestor is ace R7 with txid 4711.  Since the server's and client's txid match, the etag value is '=', and the leaf value is pruned.</a>
           </figcaption></figure>
+</div>
 <p id="section-3.4-18">Here, the server looks up the closest ancestor node that is a
 Versioned Node.  This particular server has chosen to keep a s-txid
 for the list entry ace R7, but not for any of its children.  Thus
 the server finds the server side s-txid value to be 4711 (from ace R7),
 which matches the client's c-txid value of 4711.<a href="#section-3.4-18" class="pilcrow">¶</a></p>
-<p id="section-3.4-19">Servers MUST NOT ever use the special txid values, txid-match, txid-request, txid-unknown (e.g. "=", "?", "!") as actual
+<p id="section-3.4-19">Servers MUST NOT ever use the special txid values, txid-match, txid-request, txid-unknown (e.g., "=", "?", or "!") as actual
 txid values.<a href="#section-3.4-19" class="pilcrow">¶</a></p>
 </section>
 </div>
@@ -1838,19 +1853,19 @@ the corresponding node in the running datastore.  In such cases, the
 server MUST return the same s-txid value for nodes in the candidate
 datastore as in the running datastore.<a href="#section-3.5-1" class="pilcrow">¶</a></p>
 <p id="section-3.5-2">If a node in the candidate datastore holds different data than in the
-running datastore, the server has a choice of what to return.<a href="#section-3.5-2" class="pilcrow">¶</a></p>
+running datastore, the server has a choice of what to return:<a href="#section-3.5-2" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-3.5-3.1">
-            <p id="section-3.5-3.1.1">The server MAY return a txid-unknown value (e.g. "!").  This may
-be convenient in servers that do not know a priori what txids will
-be used in a future, possible commit of the canidate.<a href="#section-3.5-3.1.1" class="pilcrow">¶</a></p>
+            <p id="section-3.5-3.1.1">The server MAY return a txid-unknown value (e.g., "!").  This may
+  be convenient in servers that do not know a priori what txids will
+  be used in a future, possible commit of the canidate.<a href="#section-3.5-3.1.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-3.5-3.2">
             <p id="section-3.5-3.2.1">If the txid-unknown value is not returned, the server MUST return
- the s-txid value the node will have after commit, assuming the client
- makes no further changes of the candidate datastore.  If a client
- makes further changes in the candidate datastore, the s-txid value
- MAY change.<a href="#section-3.5-3.2.1" class="pilcrow">¶</a></p>
+  the s-txid value the node will have after commit, assuming the client
+  makes no further changes of the candidate datastore.  If a client
+  makes further changes in the candidate datastore, the s-txid value
+  MAY change.<a href="#section-3.5-3.2.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
 <p id="section-3.5-4">See the example in
@@ -1867,18 +1882,18 @@ to make a configuration change, being sure that relevant parts of
 the server configuration have not changed since the client last
 inspected it.<a href="#section-3.6-1" class="pilcrow">¶</a></p>
 <p id="section-3.6-2">By supplying the latest c-txid values known to the client
-in its change requests (edit-config etc.), it can request the server
+in its change requests (<code>&lt;edit-config&gt;</code>, for example), it can request the server
 to reject the transaction in case any relevant changes have occurred
 at the server that the client is not yet aware of.<a href="#section-3.6-2" class="pilcrow">¶</a></p>
 <p id="section-3.6-3">This allows a client to reliably compute and send configuration
 changes to a server without either acquiring a global datastore lock
 for a potentially extended period of time, or risk that a change
 from another client disrupts the intent in the time window between a
-read (get-config etc.) and write (edit-config etc.) operation.<a href="#section-3.6-3" class="pilcrow">¶</a></p>
+read (<code>&lt;get-config&gt;</code>, for example) and write (<code>&lt;edit-config&gt;</code>, for example) operation.<a href="#section-3.6-3" class="pilcrow">¶</a></p>
 <p id="section-3.6-4">Clients that are also interested to know the s-txid assigned to the
 modified Versioned Nodes in the model immediately in the
-response could set a flag in the rpc message to request the server
-to return the new s-txid with the ok message.<a href="#section-3.6-4" class="pilcrow">¶</a></p>
+response could set a flag in the <code>&lt;rpc&gt;</code> element to request the server
+to return the new s-txid with the <code>&lt;ok&gt;</code> element.<a href="#section-3.6-4" class="pilcrow">¶</a></p>
 <span id="name-conditional-transaction-tow"></span><div id="base-edit-config">
 <figure id="figure-5">
           <div class="alignLeft art-call-flow art-text artwork" id="section-3.6-5.1">
@@ -1906,7 +1921,8 @@ to return the new s-txid with the ok message.<a href="#section-3.6-4" class="pil
 </div>
 <p id="section-3.6-6">After the above edit-config, the client might issues a get-config to
 observe the change.  It would look like this:<a href="#section-3.6-6" class="pilcrow">¶</a></p>
-<span id="name-the-txids-are-updated-on-al"></span><figure id="figure-6">
+<span id="name-the-txids-are-updated-on-al"></span><div id="fig-updated-all">
+<figure id="figure-6">
           <div class="alignLeft art-call-flow art-text artwork" id="section-3.6-7.1">
 <pre>
      Client                                            Server
@@ -1940,15 +1956,16 @@ observe the change.  It would look like this:<a href="#section-3.6-6" class="pil
 <figcaption><a href="#figure-6" class="selfRef">Figure 6</a>:
 <a href="#name-the-txids-are-updated-on-al" class="selfRef">The txids are updated on all Versioned Nodes that were modified themselves or have a child node that was modified.</a>
           </figcaption></figure>
+</div>
 <p id="section-3.6-8">When a client sends in a c-txid value of a node, the server MUST consider it a match if the server's s-txid value is identical to the client, or if the server's value is found earlier in the server's Txid History than the value supplied by the client.<a href="#section-3.6-8" class="pilcrow">¶</a></p>
-<div id="error-response-on-out-of-band-change">
+<div id="error-response-on-out-of-band-changes">
 <section id="section-3.6.1">
           <h4 id="name-error-response-on-out-of-ba">
-<a href="#section-3.6.1" class="section-number selfRef">3.6.1. </a><a href="#name-error-response-on-out-of-ba" class="section-name selfRef">Error response on Out of band change</a>
+<a href="#section-3.6.1" class="section-number selfRef">3.6.1. </a><a href="#name-error-response-on-out-of-ba" class="section-name selfRef">Error Response on Out-of-Band Changes</a>
           </h4>
 <p id="section-3.6.1-1">If the server rejects the transaction because one or more of the
 configuration s-txid value(s) differs from the client's expectation,
-the server MUST return at least one rpc-error with the following
+the server MUST return at least one <code>&lt;rpc-error&gt;</code> with the following
 values:<a href="#section-3.6.1-1" class="pilcrow">¶</a></p>
 <div class="alignLeft art-text artwork" id="section-3.6.1-2">
 <pre>
@@ -1961,7 +1978,8 @@ values:<a href="#section-3.6.1-1" class="pilcrow">¶</a></p>
 containing relevant details about one of the mismatching txids.
 A server MAY send multiple rpc-errors when multiple txid mismatches
 are detected.<a href="#section-3.6.1-3" class="pilcrow">¶</a></p>
-<span id="name-conditional-transaction-tha"></span><figure id="figure-7">
+<span id="name-conditional-transaction-tha"></span><div id="fig-cond-fails">
+<figure id="figure-7">
             <div class="alignLeft art-call-flow art-text artwork" id="section-3.6.1-4.1">
 <pre>
      Client                                            Server
@@ -1990,12 +2008,13 @@ are detected.<a href="#section-3.6.1-3" class="pilcrow">¶</a></p>
 <figcaption><a href="#figure-7" class="selfRef">Figure 7</a>:
 <a href="#name-conditional-transaction-tha" class="selfRef">Conditional transaction that fails a txid check.  The client wishes to ensure there has been no changes to the particular acl entry it edits, and therefore sends the c-txid it knows for this part of the configuration.  Since the s-txid has changed (out of band), the server rejects the configuration change request and reports an error with details about where the mismatch was detected.</a>
             </figcaption></figure>
+</div>
 </section>
 </div>
-<div id="txid-history-size-consideration">
+<div id="sec-histo-size">
 <section id="section-3.6.2">
           <h4 id="name-txid-history-size-considera">
-<a href="#section-3.6.2" class="section-number selfRef">3.6.2. </a><a href="#name-txid-history-size-considera" class="section-name selfRef">Txid History size consideration</a>
+<a href="#section-3.6.2" class="section-number selfRef">3.6.2. </a><a href="#name-txid-history-size-considera" class="section-name selfRef">Txid History Size Consideration</a>
           </h4>
 <p id="section-3.6.2-1">It may be tempting for a client implementor to send only the top
 level c-txid value for the tree being edited.  In most cases, that
@@ -2047,7 +2066,7 @@ transaction accepted.<a href="#section-3.6.2-5" class="pilcrow">¶</a></p>
         <h3 id="name-candidate-datastore-transac">
 <a href="#section-3.7" class="section-number selfRef">3.7. </a><a href="#name-candidate-datastore-transac" class="section-name selfRef">Candidate Datastore Transactions</a>
         </h3>
-<p id="section-3.7-1">When working with the (or a) Candidate datastore, the txid validation
+<p id="section-3.7-1">When using the (or a) Candidate datastore, the txid validation
 happens at commit time, rather than at individual edit-config or
 edit-data operations.  Clients add their c-txid attributes to the
 configuration payload the same way.  In case a client specifies
@@ -2110,7 +2129,7 @@ by the server at commit time.<a href="#section-3.7-1" class="pilcrow">¶</a></p>
 </pre>
 </div>
 <figcaption><a href="#figure-9" class="selfRef">Figure 9</a>:
-<a href="#name-conditional-transaction-towar" class="selfRef">Conditional transaction towards the Candidate datastore successfully executed.  As all the c-txid values specified by the client matched those on the server at the time of the commit, the transaction was successfully executed.  If a client issues a get-config towards the candidate datastore, the server may choose to return the special txid-unknown value (e.g. "!") or the s-txid value that would be used if the candidate was committed without further changes (when that s-txid value is known in advance by the server).</a>
+<a href="#name-conditional-transaction-towar" class="selfRef">Conditional transaction towards the Candidate datastore successfully executed.  As all the c-txid values specified by the client matched those on the server at the time of the commit, the transaction was successfully executed.  If a client issues a get-config towards the candidate datastore, the server may choose to return the special txid-unknown value (e.g., "!") or the s-txid value that would be used if the candidate was committed without further changes (when that s-txid value is known in advance by the server).</a>
           </figcaption></figure>
 </section>
 </div>
@@ -2119,13 +2138,13 @@ by the server at commit time.<a href="#section-3.7-1" class="pilcrow">¶</a></p>
         <h3 id="name-dependencies-within-transac">
 <a href="#section-3.8" class="section-number selfRef">3.8. </a><a href="#name-dependencies-within-transac" class="section-name selfRef">Dependencies within Transactions</a>
         </h3>
-<p id="section-3.8-1">YANG modules that contain when-statements referencing remote
+<p id="section-3.8-1">YANG modules that contain 'when' statements referencing remote
 parts of the model will cause the s-txid to change even in parts of the
 data tree that were not modified directly.<a href="#section-3.8-1" class="pilcrow">¶</a></p>
 <p id="section-3.8-2">Let's say there is an energy-example.yang module that defines a
 mechanism for clients to request the server to measure the amount of
 energy that is consumed by a given access control rule.  The
-energy-example module augments the access control module as follows:<a href="#section-3.8-2" class="pilcrow">¶</a></p>
+"energy-example" module augments the access control module as follows:<a href="#section-3.8-2" class="pilcrow">¶</a></p>
 <div class="lang-yang sourcecode" id="section-3.8-3">
 <pre>
 module energy-example {
@@ -2199,7 +2218,7 @@ individually.<a href="#section-3.8-4" class="pilcrow">¶</a></p>
           </figcaption></figure>
 <p id="section-3.8-7">At this point, a client updates metering-enabled to false.  This causes
 the when-expression on energy-tracing to turn false, removing the leaf
-entirely.  This counts as a configuration change, and the s-txid MUST
+entirely.  This counts as a configuration change, and the s-txid must
 be updated appropriately.<a href="#section-3.8-7" class="pilcrow">¶</a></p>
 <span id="name-transaction-changing-a-sing"></span><figure id="figure-11">
           <div class="alignLeft art-call-flow art-text artwork" id="section-3.8-8.1">
@@ -2268,29 +2287,33 @@ effect in the server.<a href="#section-3.8-9" class="pilcrow">¶</a></p>
 <a href="#section-3.9" class="section-number selfRef">3.9. </a><a href="#name-other-netconf-operations" class="section-name selfRef">Other NETCONF Operations</a>
         </h3>
 <span class="break"></span><dl class="dlParallel" id="section-3.9-1">
-          <dt id="section-3.9-1.1">discard-changes</dt>
+          <dt id="section-3.9-1.1">
+<code>&lt;discard-changes&gt;</code>:</dt>
           <dd style="margin-left: 1.5em" id="section-3.9-1.2">
-            <p id="section-3.9-1.2.1">The discard-changes operation resets the candidate datastore to the
+            <p id="section-3.9-1.2.1">The <code>&lt;discard-changes&gt;</code> operation resets the candidate datastore to the
 contents of the running datastore.  The server MUST ensure the
 txid values in the candidate datastore get the same txid values
 as in the running datastore when this operation runs.<a href="#section-3.9-1.2.1" class="pilcrow">¶</a></p>
 </dd>
           <dd class="break"></dd>
-<dt id="section-3.9-1.3">copy-config</dt>
+<dt id="section-3.9-1.3">
+<code>&lt;copy-config&gt;</code>:</dt>
           <dd style="margin-left: 1.5em" id="section-3.9-1.4">
-            <p id="section-3.9-1.4.1">The copy-config operation can be used to copy contents between
+            <p id="section-3.9-1.4.1">The <code>&lt;copy-config&gt;</code>` operation can be used to copy contents between
 datastores.  The server MUST ensure the txid values are retained
 and changed as if the data being copied had been sent in through an
 edit-config operation.<a href="#section-3.9-1.4.1" class="pilcrow">¶</a></p>
 </dd>
           <dd class="break"></dd>
-<dt id="section-3.9-1.5">delete-config</dt>
+<dt id="section-3.9-1.5">
+<code>&lt;delete-config&gt;</code>:</dt>
           <dd style="margin-left: 1.5em" id="section-3.9-1.6">
             <p id="section-3.9-1.6.1">The server MUST ensure the datastore txid value is changed, unless it
 was already empty.<a href="#section-3.9-1.6.1" class="pilcrow">¶</a></p>
 </dd>
           <dd class="break"></dd>
-<dt id="section-3.9-1.7">commit</dt>
+<dt id="section-3.9-1.7">
+<code>&lt;commit&gt;</code>:</dt>
           <dd style="margin-left: 1.5em" id="section-3.9-1.8">
             <p id="section-3.9-1.8.1">At commit, with regards to the txid values, the server MUST
 treat the contents of the candidate datastore as if any txid
@@ -2318,8 +2341,8 @@ updates.<a href="#section-3.10-1" class="pilcrow">¶</a></p>
 also be invoked over RESTCONF or other protocols, and might
 therefore be encoded in JSON.<a href="#section-3.10-2" class="pilcrow">¶</a></p>
 <p id="section-3.10-3">To request txid values (e.g. etag), the client adds a flag in the
-request (e.g. with-etag).  The server then returns the txid
-(e.g. etag) value in the yang-patch payload (e.g. as etag-value).<a href="#section-3.10-3" class="pilcrow">¶</a></p>
+request (e.g., with-etag).  The server then returns the txid
+(e.g., etag) value in the yang-patch payload (e.g., as etag-value).<a href="#section-3.10-3" class="pilcrow">¶</a></p>
 <span id="name-a-client-requests-a-yang-pu"></span><figure id="figure-13">
           <div class="alignLeft art-call-flow art-text artwork" id="section-3.10-4.1">
 <pre>
@@ -2436,10 +2459,10 @@ node.<a href="#section-3.11-4" class="pilcrow">¶</a></p>
 <p id="section-4-1">This document defines two txid mechanisms:<a href="#section-4-1" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-4-2.1">
-          <p id="section-4-2.1.1">The etag attribute txid mechanism<a href="#section-4-2.1.1" class="pilcrow">¶</a></p>
+          <p id="section-4-2.1.1">The etag attribute txid mechanism (<a href="#sec-etag" class="auto internal xref">Section 4.1</a>)<a href="#section-4-2.1.1" class="pilcrow">¶</a></p>
 </li>
         <li class="normal" id="section-4-2.2">
-          <p id="section-4-2.2.1">The last-modified attribute txid mechanism<a href="#section-4-2.2.1" class="pilcrow">¶</a></p>
+          <p id="section-4-2.2.1">The last-modified attribute txid mechanism (<a href="#sec-lm" class="auto internal xref">Section 4.2</a>)<a href="#section-4-2.2.1" class="pilcrow">¶</a></p>
 </li>
       </ul>
 <p id="section-4-3">Servers implementing this specification MUST support the etag
@@ -2451,10 +2474,10 @@ the mapping from the generic logic to specific mechanism and encoding.<a href="#
 <p id="section-4-5">If a client uses more than one txid mechanism, such as both etag and
 last-modified in a particular message to a server, or patricular
 commit, the result is undefined.<a href="#section-4-5" class="pilcrow">¶</a></p>
-<div id="the-etag-attribute-txid-mechanism">
+<div id="sec-etag">
 <section id="section-4.1">
         <h3 id="name-the-etag-attribute-txid-mec">
-<a href="#section-4.1" class="section-number selfRef">4.1. </a><a href="#name-the-etag-attribute-txid-mec" class="section-name selfRef">The etag attribute txid mechanism</a>
+<a href="#section-4.1" class="section-number selfRef">4.1. </a><a href="#name-the-etag-attribute-txid-mec" class="section-name selfRef">The ETag Attribute txid Mechanism</a>
         </h3>
 <p id="section-4.1-1">The etag txid mechanism described in this section is centered around
 a meta data XML attribute called "etag".  The etag attribute is
@@ -2480,16 +2503,15 @@ is not encoded in XML.  E.g. a response encoded in JSON might append
 "+json" at the end of the etag value. This is in line with the language
 in <span>[<a href="#RFC7232" class="cite xref">RFC7232</a>]</span> and traditions in the HTTP world at large.<a href="#section-4.1-4" class="pilcrow">¶</a></p>
 <p id="section-4.1-5">The detailed rules for when to update the etag value are described in
-section <span><a href="#general-txid-principles" class="internal xref">General Txid Principles</a> (<a href="#general-txid-principles" class="auto internal xref">Section 3.2</a>)</span>.  These
+<a href="#sec-principles" class="auto internal xref">Section 3.2</a>.  These
 rules are chosen to be consistent with the ETag mechanism in
-RESTCONF, <span>[<a href="#RFC8040" class="cite xref">RFC8040</a>]</span>,
-specifically sections 3.4.1.2, 3.4.1.3 and 3.5.2.<a href="#section-4.1-5" class="pilcrow">¶</a></p>
+RESTCONF, specifically Sections <a href="https://rfc-editor.org/rfc/rfc8040#section-3.4.1.2" class="relref">3.4.1.2</a>, <a href="https://rfc-editor.org/rfc/rfc8040#section-3.4.1.3" class="relref">3.4.1.3</a> and <a href="https://rfc-editor.org/rfc/rfc8040#section-3.5.2" class="relref">3.5.2</a> of <span>[<a href="#RFC8040" class="cite xref">RFC8040</a>]</span>.<a href="#section-4.1-5" class="pilcrow">¶</a></p>
 </section>
 </div>
-<div id="the-last-modified-attribute-txid-mechanism">
+<div id="sec-lm">
 <section id="section-4.2">
         <h3 id="name-the-last-modified-attribute">
-<a href="#section-4.2" class="section-number selfRef">4.2. </a><a href="#name-the-last-modified-attribute" class="section-name selfRef">The last-modified attribute txid mechanism</a>
+<a href="#section-4.2" class="section-number selfRef">4.2. </a><a href="#name-the-last-modified-attribute" class="section-name selfRef">The Last-Modified Attribute txid Mechanism</a>
         </h3>
 <p id="section-4.2-1">The last-modified txid mechanism described in this section is
 centered around a meta data XML attribute called "last-modified".
@@ -2523,8 +2545,7 @@ management protocols are RECOMMENDED to use Last-Modified timestamps
 that match the point in time referenced over RESTCONF, with the
 fractional seconds part added.<a href="#section-4.2-7" class="pilcrow">¶</a></p>
 <p id="section-4.2-8">The detailed rules for when to update the last-modified value are
-described in section
-<span><a href="#general-txid-principles" class="internal xref">General Txid Principles</a> (<a href="#general-txid-principles" class="auto internal xref">Section 3.2</a>)</span>.  These rules
+described in <a href="#sec-principles" class="auto internal xref">Section 3.2</a>.  These rules
 are chosen to be consistent with the Last-Modified mechanism in
 RESTCONF, <span>[<a href="#RFC8040" class="cite xref">RFC8040</a>]</span>,
 specifically sections 3.4.1.1, 3.4.1.3 and 3.5.1.<a href="#section-4.2-8" class="pilcrow">¶</a></p>
