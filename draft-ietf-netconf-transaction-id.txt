@@ -4,8 +4,8 @@
 
 NETCONF                                                      J. Lindblad
 Internet-Draft                                             Cisco Systems
-Intended status: Standards Track                            20 June 2024
-Expires: 22 December 2024
+Intended status: Standards Track                            22 July 2024
+Expires: 23 January 2025
 
 
                   Transaction ID Mechanism for NETCONF
@@ -51,7 +51,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 22 December 2024.
+   This Internet-Draft will expire on 23 January 2025.
 
 Copyright Notice
 
@@ -226,7 +226,7 @@ Table of Contents
 
    For servers implementing YANG-Push, an extension for conveying txid
    updates as part of subscription updates is also defined.  A similar
-   extension is also defined for servers implememnting "Comparison of
+   extension is also defined for servers implementing "Comparison of
    NMDA Datastores".
 
    Several low level mechanisms could be defined to fulfill the
@@ -2621,8 +2621,22 @@ Table of Contents
        description
          "Unique Entity-tag txid value representing a specific
          transaction.  Could be any string that does not contain
-         spaces, double quotes or backslash.  The txid values '?',
-         '!' and '=' have special meaning.";
+         spaces, double quotes or backslash.
+
+         The txid values '?', '!' and '=' have special meaning:
+
+         '?' This txid value is used by clients and is
+             guaranteed not to match any txid on the server.
+
+         '!' This txid value used by servers to indicate
+             the node in the candidate datastore has changed
+             relative to the running datastore, but not yet received
+             a new txid value on the server.
+
+         '=' This txid value used by servers to indicate
+             that contents has been pruned due to txid match
+             between client and server.
+         ";
      }
 
      typedef last-modified-t {
@@ -2636,7 +2650,7 @@ Table of Contents
            enum ! {
              description "Txid value used by servers to indicate
                the node in the candidate datastore has changed
-               relative the running datastore, but not yet received
+               relative to the running datastore, but not yet received
                a new txid value on the server.";
            }
            enum = {

@@ -17,11 +17,11 @@ specifies an extension to NETCONF that allows clients and servers to
 keep synchronized with a much smaller data exchange and without any
 need for servers to store information about the clients. 
     " name="description">
-<meta content="xml2rfc 3.21.0" name="generator">
+<meta content="xml2rfc 3.22.0" name="generator">
 <meta content="Internet-Draft" name="keyword">
 <meta content="draft-ietf-netconf-transaction-id-latest" name="ietf.draft">
 <!-- Generator version information:
-  xml2rfc 3.21.0
+  xml2rfc 3.22.0
     Python 3.12.3
     ConfigArgParse 1.7
     google-i18n-address 3.1.0
@@ -31,9 +31,8 @@ need for servers to store information about the clients.
     platformdirs 4.2.2
     pycountry 22.3.5
     PyYAML 6.0.1
-    requests 2.31.0
+    requests 2.32.3
     setuptools 69.5.1
-    six 1.16.0
     wcwidth 0.2.13
 -->
 <link href="draft-ietf-netconf-transaction-id.xml" rel="alternate" type="application/rfc+xml">
@@ -1041,11 +1040,11 @@ svg :is([stroke="fill"], [fill^="#fff"]) {
 <thead><tr>
 <td class="left">Internet-Draft</td>
 <td class="center">NCTID</td>
-<td class="right">June 2024</td>
+<td class="right">July 2024</td>
 </tr></thead>
 <tfoot><tr>
 <td class="left">Lindblad</td>
-<td class="center">Expires 22 December 2024</td>
+<td class="center">Expires 23 January 2025</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1058,12 +1057,12 @@ svg :is([stroke="fill"], [fill^="#fff"]) {
 <dd class="internet-draft">draft-ietf-netconf-transaction-id-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2024-06-20" class="published">20 June 2024</time>
+<time datetime="2024-07-22" class="published">22 July 2024</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Standards Track</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2024-12-22">22 December 2024</time></dd>
+<dd class="expires"><time datetime="2025-01-23">23 January 2025</time></dd>
 <dt class="label-authors">Author:</dt>
 <dd class="authors">
 <div class="author">
@@ -1116,7 +1115,7 @@ need for servers to store information about the clients.<a href="#section-abstra
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 22 December 2024.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 23 January 2025.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1464,7 +1463,7 @@ that clients are able to conditionally retrieve and update the
 configuration in a NETCONF server.<a href="#section-3-1" class="pilcrow">¶</a></p>
 <p id="section-3-2">For servers implementing YANG-Push, an extension for conveying txid
 updates as part of subscription updates is also defined.  A similar
-extension is also defined for servers implememnting
+extension is also defined for servers implementing
 "Comparison of NMDA Datastores".<a href="#section-3-2" class="pilcrow">¶</a></p>
 <p id="section-3-3">Several low level mechanisms could be defined to fulfill the
 requirements for efficient client-server txid synchronization.
@@ -4059,8 +4058,22 @@ module ietf-netconf-txid {
     description
       "Unique Entity-tag txid value representing a specific
       transaction.  Could be any string that does not contain
-      spaces, double quotes or backslash.  The txid values '?',
-      '!' and '=' have special meaning.";
+      spaces, double quotes or backslash.
+
+      The txid values '?', '!' and '=' have special meaning:
+
+      '?' This txid value is used by clients and is
+          guaranteed not to match any txid on the server.
+
+      '!' This txid value used by servers to indicate
+          the node in the candidate datastore has changed
+          relative to the running datastore, but not yet received
+          a new txid value on the server.
+
+      '=' This txid value used by servers to indicate
+          that contents has been pruned due to txid match
+          between client and server.
+      ";
   }
 
   typedef last-modified-t {
@@ -4074,7 +4087,7 @@ module ietf-netconf-txid {
         enum ! {
           description "Txid value used by servers to indicate
             the node in the candidate datastore has changed
-            relative the running datastore, but not yet received
+            relative to the running datastore, but not yet received
             a new txid value on the server.";
         }
         enum = {
@@ -4805,6 +4818,7 @@ etags.<a href="#section-9.8-1.10.1" class="pilcrow">¶</a></p>
 </div>
 </section>
 </div>
+<div id="sec-combined-references">
 <section id="section-10">
       <h2 id="name-references">
 <a href="#section-10" class="section-number selfRef">10. </a><a href="#name-references" class="section-name selfRef">References</a>
@@ -4908,6 +4922,7 @@ etags.<a href="#section-9.8-1.10.1" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
+</div>
 <div id="acknowledgments">
 <section id="appendix-A">
       <h2 id="name-acknowledgments">
