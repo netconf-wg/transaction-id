@@ -2027,14 +2027,16 @@ are detected.<a href="#section-3.6.1-3" class="pilcrow">¶</a></p>
           <h4 id="name-txid-history-size-considera">
 <a href="#section-3.6.2" class="section-number selfRef">3.6.2. </a><a href="#name-txid-history-size-considera" class="section-name selfRef">Txid History Size Consideration</a>
           </h4>
-<p id="section-3.6.2-1">It may be tempting for a client implementor to send only the top
-level c-txid value for the tree being edited.  In most cases, that
+<p id="section-3.6.2-1">It may be tempting for a client implementor to send a single
+c-txid value for the tree being edited.  In many cases, that
 would certainly work just fine.  This is a way for the client to
 request the server to go ahead with the change as long as there
-has not been any changes more recent than the client provided c-txid.<a href="#section-3.6.2-1" class="pilcrow">¶</a></p>
+has not been any changes more recent in the subtree below the
+c-txid provided.<a href="#section-3.6.2-1" class="pilcrow">¶</a></p>
 <p id="section-3.6.2-2">Here the client is sending the same change as in
-<span><a href="#base-edit-config" class="internal xref">the example above</a> (<a href="#base-edit-config" class="auto internal xref">Figure 5</a>)</span>, but with only one top level
-c-txid value.<a href="#section-3.6.2-2" class="pilcrow">¶</a></p>
+<span><a href="#base-edit-config" class="internal xref">the example above</a> (<a href="#base-edit-config" class="auto internal xref">Figure 5</a>)</span>, but with only a single
+c-txid value that reflects the latest txid the client is
+aware of anywhere in the configuration.<a href="#section-3.6.2-2" class="pilcrow">¶</a></p>
 <span id="name-conditional-transaction-towa"></span><figure id="figure-8">
             <div class="alignLeft art-call-flow art-text artwork" id="section-3.6.2-3.1">
 <pre>
@@ -2042,32 +2044,38 @@ c-txid value.<a href="#section-3.6.2-2" class="pilcrow">¶</a></p>
        |                                                 |
        |   ------------------------------------------&gt;   |
        |   edit-config (request new txid in response)    |
-       |     config (txid: 5152)                         |
+       |     config                                      |
        |       acls                                      |
-       |         acl A1                                  |
+       |         acl A1 (txid: 8602)                     |
        |           aces                                  |
        |             ace R1                              |
        |               matches ipv4 protocol 6           |
        |               actions forwarding accept         |
        |                                                 |
        |   &lt;------------------------------------------   |
-       |   ok (txid: 7688)                               |
+       |   ok (txid: 9009)                               |
        v                                                 v
 </pre>
 </div>
 <figcaption><a href="#figure-8" class="selfRef">Figure 8</a>:
 <a href="#name-conditional-transaction-towa" class="selfRef">Conditional transaction towards the Running datastore successfully executed.  As all the c-txid values specified by the client were the same or more recent in the server's Txid History, so the transaction was successfully executed.</a>
             </figcaption></figure>
-<p id="section-3.6.2-4">This approach works well because the top level value is inherited
-down in the child nodes and the server finds this value to either
-match exactly or be a more recent s-txid value in the server's Txid
-History.<a href="#section-3.6.2-4" class="pilcrow">¶</a></p>
-<p id="section-3.6.2-5">The only caveat is that by relying on the server's Txid History being
-long enough, the change could be rejected if the top level c-txid has
-fallen out of the server's Txid History.  Some servers may have a
-Txid History size of zero.  A client specifying a single top-level
-c-txid value towards such a server would not be able to get the
-transaction accepted.<a href="#section-3.6.2-5" class="pilcrow">¶</a></p>
+<p id="section-3.6.2-4">This approach works well in the example above because the c-txid
+value 8602 is inherited down in the child nodes, from acl A1 to aces,
+ace R1, and onwards. The server compares the c-txid value 8602
+with the s-txid value in the data tree.  The server finds that the
+values do not match (e.g., s-txid 7688 for ace R1 is not equal to
+c-txid 8602), but finds that 8602 is a more recent txid than 7688
+by looking in the server's Txid History, and therefore accepts the
+transaction.<a href="#section-3.6.2-4" class="pilcrow">¶</a></p>
+<p id="section-3.6.2-5">Clients relying on the server's Txid History being long enough,
+could see their changes rejected if some of the s-txid have
+fallen out of the server's Txid History (e.g., if the txid 7688
+happened so long ago that the it is no longer in the server's
+Txid History).  Some servers may have a Txid History size of zero.
+A client specifying a single c-txid value for a change like the one
+above towards such a server would not be able to get the transaction
+accepted.<a href="#section-3.6.2-5" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
