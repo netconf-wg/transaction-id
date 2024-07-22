@@ -338,7 +338,7 @@ transaction ids.
 
 Some server implementors may decide to use a completely different txid
 value sequence, to the point that the sequence may appear completely
-random to outside observers.  Clients MUST NOT assume or infer any semantic from txids. For example, clients mus not assume that
+random to outside observers.  Clients MUST NOT assume or infer any semantic from txids. For example, clients must not assume that
 servers use a txid value scheme that reveals information about the
 temporal sequence of txid values.
 
@@ -1119,7 +1119,7 @@ is not encoded in XML.  E.g. a response encoded in JSON might append
 in {{RFC7232}} and traditions in the HTTP world at large.
 
 The detailed rules for when to update the etag value are described in
-section [General Txid Principles](#general-txid-principles).  These
+{{sec-principles}}.  These
 rules are chosen to be consistent with the ETag mechanism in
 RESTCONF, specifically {{Sections 3.4.1.2, 3.4.1.3 and 3.5.2 of RFC8040}}.
 
@@ -1164,8 +1164,7 @@ that match the point in time referenced over RESTCONF, with the
 fractional seconds part added.
 
 The detailed rules for when to update the last-modified value are
-described in section
-[General Txid Principles](#general-txid-principles).  These rules
+described in {{sec-principles}}.  These rules
 are chosen to be consistent with the Last-Modified mechanism in
 RESTCONF, {{RFC8040}},
 specifically sections 3.4.1.1, 3.4.1.3 and 3.5.1.
