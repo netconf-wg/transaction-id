@@ -140,7 +140,19 @@ the server maintains a transaction id (txid) value.
 Transaction-id Mechanism:
 : A protocol implementation that fulfills the principles described in
 the first part, [NETCONF Txid Extension](#netconf-txid-extension), of
-this document.
+this document.  See also Etag and Last-Modified.
+
+Etag:
+: One protocol mechanism that conforms to the definitions in the
+[NETCONF Txid Extension](#netconf-txid-extension) section in this
+document.  Also the name of the XML attribute that this mechanism
+uses in the NETCONF stream, and the message header used in RESTCONF.
+
+Last-Modified:
+: Another protocol mechanism that conforms to the definitions in the
+[NETCONF Txid Extension](#netconf-txid-extension) section in this
+document.  Also the name of the XML attribute that this mechanism
+uses in the NETCONF stream, and the message header used in RESTCONF.
 
 Txid:
 : Abbreviation of Transaction-id
@@ -168,7 +180,7 @@ configuration in a NETCONF server.
 
 For servers implementing YANG-Push {{!RFC8641}}, an extension for conveying txid
 updates as part of subscription updates is also defined.  A similar
-extension is also defined for servers implememnting
+extension is also defined for servers implementing
 "Comparison of NMDA Datastores" {{!RFC9144}}.
 
 Several low level mechanisms could be defined to fulfill the
@@ -185,7 +197,7 @@ and provides concrete encoding examples.
 
 ## Sample Use Cases
 
-The common use cases for txid mecahnisms are briefly discussed in this section.
+The common use cases for txid mechanisms are briefly discussed in this section.
 
 Initial configuration retrieval:
 : When a client initially connects to a server, it may be interested
@@ -311,8 +323,10 @@ recent change seems to have been an update to ace R8 and
 R9." #fig-baseline}
 
 > The call flow examples in this document use a 4-digit,
-monotonously increasing integer as txid.  This is convenient and
-enhances readability of the examples, but does not necessarily
+monotonously increasing integer as txid.  The same txid value
+is also used for all changed nodes in a given transaction.
+These conventions of the examples are convenient and enhances
+readability of the examples, but do not necessarily
 reflect a typical implementation.
 
 Txid values are opaque strings that uniquely identify
@@ -353,7 +367,7 @@ s-txid value in the server's Txid History,
 the server prunes (i.e., does not return) that subtree from
 the response.  Since the client already knows the txid for that part
 of the data tree, or a txid that occurred more recently, it
-is obviosuly already up to date with that part of the configuration.
+is obviously already up to date with that part of the configuration.
 Sending it again would be a waste of time and energy.
 
 {{tab-rules}} describes in detail how the client side (c-txid) and
@@ -370,7 +384,7 @@ Servers MUST process each of the config true nodes as follows:
 | ----- | ------------------------------- | ------------------------------- |
 |  2. CLIENT ANCESTOR TXID | The client did not specify a c-txid value for the current node, but did specify a c-txid value for one or more ancestors of this node. | In this case, the current node MUST inherit the c-txid value of the closest ancestor node in the client's request that has a c-txid value.  Processing of the current node continues according to the rules below. |
 | ----- | ------------------------------- | ------------------------------- |
-|  3. SERVER ANCESTOR TXID | The node is not a Versioned Node, i.e. the server does not maintain a s-txid value for this node. | In this case, the current node MUST inherit the server's s-txid value of the closest ancestor that is a Versioned Node (has a server side s-txid value).  The datastore root is always a Versioned Node.  Processing of the current node continues according to the rules below. |
+|  3. SERVER ANCESTOR TXID | The node is not a Versioned Node, i.e. the server does not maintain a s-txid value for this node. | In this case, the current node MUST, for the purposes of these rules, temporarily inherit the server's s-txid value of the closest ancestor that is a Versioned Node (has a server side s-txid value).  The datastore root is always a Versioned Node.  Processing of the current node continues according to the rules below. |
 | ----- | ------------------------------- | ------------------------------- |
 |  4. CLIENT TXID UP TO DATE | The client specified c-txid for the current node value is "up to date", i.e. it matches the server's s-txid value, or matches a s-txid value from the server's Txid History that is more recent than the server's s-txid value for this node. | In this case the server MUST return the node decorated with a special "txid-match" txid value (e.g. "=") to the matching node, pruning any value and child nodes. |
 | ----- | ------------------------------- | ------------------------------- |
@@ -442,7 +456,8 @@ s-txid values on this example server are currently: 4711, 5152, 5550,
 ~~~
 {: #fig-oob-change title="Out of band change detected.  Client sends get-config
 request with known txid values.  Server provides updates only where
-changes have happened."}
+changes have happened.  (Txid 7770 does not appear in this subtree,
+so that transaction must relate to some changes elsewhere.)"}
 
 In the example depicted in {{fig-oob-change}}, the server returns the acls container because
 the client supplied c-txid value (5152) differs from the s-txid value
@@ -520,13 +535,14 @@ running datastore, the server has a choice of what to return:
 
   - The server MAY return a txid-unknown value (e.g., "!").  This may
   be convenient in servers that do not know a priori what txids will
-  be used in a future, possible commit of the canidate.
+  be used in a future, possible commit of the candidate.
 
   - If the txid-unknown value is not returned, the server MUST return
   the s-txid value the node will have after commit, assuming the client
   makes no further changes of the candidate datastore.  If a client
   makes further changes in the candidate datastore, the s-txid value
-  MAY change.
+  MAY change again, i.e. the server is not required to stick with the
+  s-txid value just returned.
 
 See the example in
 [Candidate Datastore Transactions](#candidate-datastore-transactions).
@@ -550,7 +566,7 @@ from another client disrupts the intent in the time window between a
 read (``<get-config>``, for example) and write (``<edit-config>``, for example) operation.
 
 Clients that are also interested to know the s-txid assigned to the
-modified Versioned Nodes in the model immediately in the
+root Versioned Node in the model immediately in the
 response could set a flag in the ``<rpc>`` element to request the server
 to return the new s-txid with the ``<ok>`` element.
 
@@ -962,7 +978,8 @@ an rpc-error as described in section
 ## YANG-Push Subscriptions
 
 A client issuing a YANG-Push establish-subscription or
-modify-subscription request towards a server that supports
+modify-subscription request or configures a YANG-Push subscription
+towards a server that supports
 ietf-netconf-txid-yang-push.yang MAY request that the server
 provides updated txid values in YANG-Push on-change subscription
 updates.
@@ -1092,7 +1109,7 @@ the logic that governs all txid mechanisms.  This section describes
 the mapping from the generic logic to specific mechanism and encoding.
 
 If a client uses more than one txid mechanism, such as both etag and
-last-modified in a particular message to a server, or patricular
+last-modified in a particular message to a server, or particular
 commit, the result is undefined.
 
 ## The ETag Attribute txid Mechanism {#sec-etag}
@@ -1306,7 +1323,11 @@ configuration, a client might send:
 ~~~ xml
 <rpc xmlns="urn:ietf:params:xml:ns:netconf:base:1.0" message-id="1"
      xmlns:txid="urn:ietf:params:xml:ns:netconf:txid:1.0">
-  <get-config txid:etag="?"/>
+  <get-config txid:etag="?">
+    <source>
+      <running/>
+    </source>
+  </get-config>
 </rpc>
 ~~~
 
@@ -2600,7 +2621,7 @@ Reference: RFC XXXX
 
 ## IETF XML Registry
 
-This document request IANA to register four XML namespace URIs in the the "ns"
+This document request IANA to register four XML namespace URIs in the "ns"
 subregistry within the "IETF XML Registry" {{RFC3688}}:
 
 ~~~
