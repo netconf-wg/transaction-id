@@ -4,8 +4,8 @@
 
 NETCONF                                                      J. Lindblad
 Internet-Draft                                             Cisco Systems
-Intended status: Standards Track                            22 July 2024
-Expires: 23 January 2025
+Intended status: Standards Track                           6 August 2024
+Expires: 7 February 2025
 
 
                   Transaction ID Mechanism for NETCONF
@@ -51,7 +51,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 23 January 2025.
+   This Internet-Draft will expire on 7 February 2025.
 
 Copyright Notice
 
@@ -205,7 +205,18 @@ Table of Contents
 
    Transaction-id Mechanism:  A protocol implementation that fulfills
       the principles described in the first part, NETCONF Txid Extension
-      (Section 3), of this document.
+      (Section 3), of this document.  See also Etag and Last-Modified.
+
+   Etag:  One protocol mechanism that conforms to the definitions in the
+      NETCONF Txid Extension (Section 3) section in this document.  Also
+      the name of the XML attribute that this mechanism uses in the
+      NETCONF stream, and the message header used in RESTCONF.
+
+   Last-Modified:  Another protocol mechanism that conforms to the
+      definitions in the NETCONF Txid Extension (Section 3) section in
+      this document.  Also the name of the XML attribute that this
+      mechanism uses in the NETCONF stream, and the message header used
+      in RESTCONF.
 
    Txid:  Abbreviation of Transaction-id
 
@@ -230,7 +241,7 @@ Table of Contents
    For servers implementing YANG-Push [RFC8641], an extension for
    conveying txid updates as part of subscription updates is also
    defined.  A similar extension is also defined for servers
-   implememnting "Comparison of NMDA Datastores" [RFC9144].
+   implementing "Comparison of NMDA Datastores" [RFC9144].
 
    Several low level mechanisms could be defined to fulfill the
    requirements for efficient client/server txid synchronization.  This
@@ -247,7 +258,7 @@ Table of Contents
 
 3.1.  Sample Use Cases
 
-   The common use cases for txid mecahnisms are briefly discussed in
+   The common use cases for txid mechanisms are briefly discussed in
    this section.
 
    Initial configuration retrieval:  When a client initially connects to
@@ -371,9 +382,11 @@ Table of Contents
         recent change seems to have been an update to ace R8 and R9.
 
       The call flow examples in this document use a 4-digit,
-      monotonously increasing integer as txid.  This is convenient and
-      enhances readability of the examples, but does not necessarily
-      reflect a typical implementation.
+      monotonously increasing integer as txid.  The same txid value is
+      also used for all changed nodes in a given transaction.  These
+      conventions of the examples are convenient and enhances
+      readability of the examples, but do not necessarily reflect a
+      typical implementation.
 
    Txid values are opaque strings that uniquely identify a particular
    configuration state.  Servers are expected to know which txid values
@@ -414,7 +427,7 @@ Table of Contents
    recent s-txid value in the server's Txid History, the server prunes
    (i.e., does not return) that subtree from the response.  Since the
    client already knows the txid for that part of the data tree, or a
-   txid that occurred more recently, it is obviosuly already up to date
+   txid that occurred more recently, it is obviously already up to date
    with that part of the configuration.  Sending it again would be a
    waste of time and energy.
 
@@ -425,68 +438,71 @@ Table of Contents
 
    Servers MUST process each of the config true nodes as follows:
 
-   +==========+===========================+============================+
-   | Case     | Condition                 | Behavior                   |
-   +==========+===========================+============================+
-   | 1.  NO   | In its request, the       | In this case, the server   |
-   | CLIENT   | client did not specify a  | MUST return the current    |
-   | TXID     | c-txid value for the      | node according to the      |
-   |          | current node, nor any     | normal NETCONF             |
-   |          | ancestor of this node.    | specifications.  The       |
-   |          |                           | rules below do not apply   |
-   |          |                           | to the current node.  Any  |
-   |          |                           | child nodes MUST also be   |
-   |          |                           | evaluated with respect to  |
-   |          |                           | these rules.               |
-   +----------+---------------------------+----------------------------+
-   | 2.       | The client did not        | In this case, the current  |
-   | CLIENT   | specify a c-txid value    | node MUST inherit the      |
-   | ANCESTOR | for the current node, but | c-txid value of the        |
-   | TXID     | did specify a c-txid      | closest ancestor node in   |
-   |          | value for one or more     | the client's request that  |
-   |          | ancestors of this node.   | has a c-txid value.        |
-   |          |                           | Processing of the current  |
-   |          |                           | node continues according   |
-   |          |                           | to the rules below.        |
-   +----------+---------------------------+----------------------------+
-   | 3.       | The node is not a         | In this case, the current  |
-   | SERVER   | Versioned Node, i.e. the  | node MUST inherit the      |
-   | ANCESTOR | server does not maintain  | server's s-txid value of   |
-   | TXID     | a s-txid value for this   | the closest ancestor that  |
-   |          | node.                     | is a Versioned Node (has   |
-   |          |                           | a server side s-txid       |
-   |          |                           | value).  The datastore     |
-   |          |                           | root is always a           |
-   |          |                           | Versioned Node.            |
-   |          |                           | Processing of the current  |
-   |          |                           | node continues according   |
-   |          |                           | to the rules below.        |
-   +----------+---------------------------+----------------------------+
-   | 4.       | The client specified      | In this case the server    |
-   | CLIENT   | c-txid for the current    | MUST return the node       |
-   | TXID UP  | node value is "up to      | decorated with a special   |
-   | TO DATE  | date", i.e. it matches    | "txid-match" txid value    |
-   |          | the server's s-txid       | (e.g. "=") to the          |
-   |          | value, or matches a       | matching node, pruning     |
-   |          | s-txid value from the     | any value and child        |
-   |          | server's Txid History     | nodes.                     |
-   |          | that is more recent than  |                            |
-   |          | the server's s-txid value |                            |
-   |          | for this node.            |                            |
-   +----------+---------------------------+----------------------------+
-   | 5.       | The specified c-txid is   | In this case the server    |
-   | CLIENT   | "outdated" or "unknown"   | MUST return the current    |
-   | TXID OUT | to the server, i.e. it    | node according to the      |
-   | OF DATE  | does not match the        | normal NETCONF             |
-   |          | server's s-txid value for | specifications.  If the    |
-   |          | this node, nor does the   | current node is a          |
-   |          | client c-txid value match | Versioned Node, it MUST    |
-   |          | any s-txid value in the   | be decorated with the      |
-   |          | server's Txid History     | s-txid value.  Any child   |
-   |          | that is more recent than  | nodes MUST also be         |
-   |          | the server's s-txid value | evaluated with respect to  |
-   |          | for this node.            | these rules.               |
-   +----------+---------------------------+----------------------------+
+    +==========+=========================+============================+
+    | Case     | Condition               | Behavior                   |
+    +==========+=========================+============================+
+    | 1.  NO   | In its request, the     | In this case, the server   |
+    | CLIENT   | client did not specify  | MUST return the current    |
+    | TXID     | a c-txid value for the  | node according to the      |
+    |          | current node, nor any   | normal NETCONF             |
+    |          | ancestor of this node.  | specifications.  The rules |
+    |          |                         | below do not apply to the  |
+    |          |                         | current node.  Any child   |
+    |          |                         | nodes MUST also be         |
+    |          |                         | evaluated with respect to  |
+    |          |                         | these rules.               |
+    +----------+-------------------------+----------------------------+
+    | 2.       | The client did not      | In this case, the current  |
+    | CLIENT   | specify a c-txid value  | node MUST inherit the      |
+    | ANCESTOR | for the current node,   | c-txid value of the        |
+    | TXID     | but did specify a       | closest ancestor node in   |
+    |          | c-txid value for one or | the client's request that  |
+    |          | more ancestors of this  | has a c-txid value.        |
+    |          | node.                   | Processing of the current  |
+    |          |                         | node continues according   |
+    |          |                         | to the rules below.        |
+    +----------+-------------------------+----------------------------+
+    | 3.       | The node is not a       | In this case, the current  |
+    | SERVER   | Versioned Node, i.e.    | node MUST, for the         |
+    | ANCESTOR | the server does not     | purposes of these rules,   |
+    | TXID     | maintain a s-txid value | temporarily inherit the    |
+    |          | for this node.          | server's s-txid value of   |
+    |          |                         | the closest ancestor that  |
+    |          |                         | is a Versioned Node (has a |
+    |          |                         | server side s-txid value). |
+    |          |                         | The datastore root is      |
+    |          |                         | always a Versioned Node.   |
+    |          |                         | Processing of the current  |
+    |          |                         | node continues according   |
+    |          |                         | to the rules below.        |
+    +----------+-------------------------+----------------------------+
+    | 4.       | The client specified    | In this case the server    |
+    | CLIENT   | c-txid for the current  | MUST return the node       |
+    | TXID UP  | node value is "up to    | decorated with a special   |
+    | TO DATE  | date", i.e. it matches  | "txid-match" txid value    |
+    |          | the server's s-txid     | (e.g. "=") to the matching |
+    |          | value, or matches a     | node, pruning any value    |
+    |          | s-txid value from the   | and child nodes.           |
+    |          | server's Txid History   |                            |
+    |          | that is more recent     |                            |
+    |          | than the server's       |                            |
+    |          | s-txid value for this   |                            |
+    |          | node.                   |                            |
+    +----------+-------------------------+----------------------------+
+    | 5.       | The specified c-txid is | In this case the server    |
+    | CLIENT   | "outdated" or "unknown" | MUST return the current    |
+    | TXID OUT | to the server, i.e. it  | node according to the      |
+    | OF DATE  | does not match the      | normal NETCONF             |
+    |          | server's s-txid value   | specifications.  If the    |
+    |          | for this node, nor does | current node is a          |
+    |          | the client c-txid value | Versioned Node, it MUST be |
+    |          | match any s-txid value  | decorated with the s-txid  |
+    |          | in the server's Txid    | value.  Any child nodes    |
+    |          | History that is more    | MUST also be evaluated     |
+    |          | recent than the         | with respect to these      |
+    |          | server's s-txid value   | rules.                     |
+    |          | for this node.          |                            |
+    +----------+-------------------------+----------------------------+
 
                Table 1: The Txid rules for response pruning.
 
@@ -552,7 +568,9 @@ Table of Contents
 
       Figure 3: Out of band change detected.  Client sends get-config
        request with known txid values.  Server provides updates only
-                        where changes have happened.
+      where changes have happened.  (Txid 7770 does not appear in this
+          subtree, so that transaction must relate to some changes
+                                elsewhere.)
 
    In the example depicted in Figure 3, the server returns the acls
    container because the client supplied c-txid value (5152) differs
@@ -630,13 +648,14 @@ Table of Contents
 
    *  The server MAY return a txid-unknown value (e.g., "!").  This may
       be convenient in servers that do not know a priori what txids will
-      be used in a future, possible commit of the canidate.
+      be used in a future, possible commit of the candidate.
 
    *  If the txid-unknown value is not returned, the server MUST return
       the s-txid value the node will have after commit, assuming the
       client makes no further changes of the candidate datastore.  If a
       client makes further changes in the candidate datastore, the
-      s-txid value MAY change.
+      s-txid value MAY change again, i.e. the server is not required to
+      stick with the s-txid value just returned.
 
    See the example in Candidate Datastore Transactions (Section 3.7).
 
@@ -660,9 +679,9 @@ Table of Contents
    operation.
 
    Clients that are also interested to know the s-txid assigned to the
-   modified Versioned Nodes in the model immediately in the response
-   could set a flag in the <rpc> element to request the server to return
-   the new s-txid with the <ok> element.
+   root Versioned Node in the model immediately in the response could
+   set a flag in the <rpc> element to request the server to return the
+   new s-txid with the <ok> element.
 
         Client                                            Server
           |                                                 |
@@ -1057,9 +1076,10 @@ Table of Contents
 3.10.  YANG-Push Subscriptions
 
    A client issuing a YANG-Push establish-subscription or modify-
-   subscription request towards a server that supports ietf-netconf-
-   txid-yang-push.yang MAY request that the server provides updated txid
-   values in YANG-Push on-change subscription updates.
+   subscription request or configures a YANG-Push subscription towards a
+   server that supports ietf-netconf-txid-yang-push.yang MAY request
+   that the server provides updated txid values in YANG-Push on-change
+   subscription updates.
 
    This functionality pertains only to on-change updates.  This RPC may
    also be invoked over RESTCONF or other protocols, and might therefore
@@ -1184,7 +1204,7 @@ Table of Contents
    the generic logic to specific mechanism and encoding.
 
    If a client uses more than one txid mechanism, such as both etag and
-   last-modified in a particular message to a server, or patricular
+   last-modified in a particular message to a server, or particular
    commit, the result is undefined.
 
 4.1.  The ETag Attribute txid Mechanism
@@ -1392,7 +1412,11 @@ Table of Contents
 
    <rpc xmlns="urn:ietf:params:xml:ns:netconf:base:1.0" message-id="1"
         xmlns:txid="urn:ietf:params:xml:ns:netconf:txid:1.0">
-     <get-config txid:etag="?"/>
+     <get-config txid:etag="?">
+       <source>
+         <running/>
+       </source>
+     </get-config>
    </rpc>
 
    The server's reply might then be:
@@ -3039,7 +3063,7 @@ Table of Contents
 8.2.  IETF XML Registry
 
    This document request IANA to register four XML namespace URIs in the
-   the "ns" subregistry within the "IETF XML Registry" [RFC3688]:
+   "ns" subregistry within the "IETF XML Registry" [RFC3688]:
 
      URI: urn:ietf:params:xml:ns:netconf:txid:1.0
      Registrant Contact: The IESG.
