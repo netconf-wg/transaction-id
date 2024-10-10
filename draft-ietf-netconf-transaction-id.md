@@ -119,6 +119,16 @@ RESTCONF mechanism relies on HTTP Headers instead, and use none of
 the XML attributes described in this document, nor JSON Metadata
 (see {{RFC7952}}).
 
+## How to Read this Document
+
+At the heart of this document, in chapter [Txid Mechanisms](#txid-mechanisms), there are two transaction-id handling mechanisms defined, the "Etag" and "Last-Modified" Transaction-id mechanisms.
+
+The common and general principles for all transaction-id mechanisms are defined in the chapter before that, [NETCONF Txid Extension](#netconf-txid-extension).  Since the two Transaction-id mechanisms defined in this document have a lot in common, and the future might bring additional such mechanisms, this arrangement keeps the repetition to a minimum.  By necessity, this chapter is a bit abstract.  The details of how the principles are expressed in a specific Transaction-id mechanism follows in the [Txid Mechanisms](#txid-mechanisms) chapter.
+
+Next after the central chapter with the definitions of the Transaction-id handling mechanisms, there is an extensive chapter with usage examples.  This chapter is called [Txid Mechanism Examples](#txid-mechanism-examples).
+
+Towards the end, there is also a chapter with [YANG Modules](#yang-modules).  These are necessary for a correct implementation, but reading them will not provide much for the understanding of this document.  The mechanisms defined in this document are largely on the NETCONF protocol level, and most aspects cannot be described by YANG modules.
+
 # Conventions and Definitions
 
 {::boilerplate bcp14}
@@ -251,7 +261,7 @@ txid values.
 Regardless of whether a server declares the Versioned Nodes or not,
 the set of Versioned Nodes in the server's YANG tree MUST remain
 constant, except at system redefining events, such as software upgrades
-or entitlement installations or removals.
+or entitlement (a.k.a. "license") installations or removals.
 
 The server returning txid values for the Versioned Nodes
 MUST ensure that the txid values are changed every time there has
@@ -323,7 +333,7 @@ recent change seems to have been an update to ace R8 and
 R9." #fig-baseline}
 
 > The call flow examples in this document use a 4-digit,
-monotonously increasing integer as txid.  The same txid value
+strictly increasing integer as txid.  The same txid value
 is also used for all changed nodes in a given transaction.
 These conventions of the examples are convenient and enhances
 readability of the examples, but do not necessarily
@@ -343,16 +353,14 @@ described in the coming sections. Servers may expose a configuration parameter
 to control the history depth. Such control depends on the local server capabilities.
 Refer to {{sec-histo-size}} for more considerations about history size.
 
-Some server implementors may decide to use a monotonically increasing
+Some server implementors may decide to use a strictly increasing
 integer as the txid value or a timestamp.  Doing so obviously makes
 it very easy for the server to determine the sequence of historical
 transaction ids.
 
 Some server implementors may decide to use a completely different txid
 value sequence, to the point that the sequence may appear completely
-random to outside observers.  Clients MUST NOT assume or infer any semantic from txids. For example, clients must not assume that
-servers use a txid value scheme that reveals information about the
-temporal sequence of txid values.
+random to outside observers.
 
 ## Subsequent Configuration Retrieval
 
@@ -397,6 +405,8 @@ key nodes MUST be included in the response, and other child nodes
 MUST NOT be included.  For containers, child nodes MUST NOT
 be included.
 
+### When there is No Change
+
 Here follows a couple of examples of how the rules above are applied.
 See [the example above](#fig-baseline) for the most recent server
 configuration state that the client is aware of, before this happens:
@@ -425,6 +435,8 @@ the response at the earliest point offered by the client."}
 In this case, the server's txid-based pruning saved a substantial
 amount of information that is already known by the client to be sent
 to and processed by the client.
+
+### When there is an Out-Of-Band (OOB) Change
 
 In the following example someone has made a change to the
 configuration on the server.  This server has chosen to implement
@@ -480,6 +492,8 @@ exactly match (5152). Finally, acl R9 is returned because of its less
 recent c-txid value given by the client (5152, on the closest ancestor
 acl A2) than the s-txid held on the server (6614).
 
+### When a Txid value is Inherited from an Ancestor Node
+
 In the example shown in {{fig-vn}}, the client specifies the c-txid for a node that
 the server does not maintain a s-txid for, i.e., it is not a
 Versioned Node.
@@ -519,7 +533,8 @@ for the list entry ace R7, but not for any of its children.  Thus
 the server finds the server side s-txid value to be 4711 (from ace R7),
 which matches the client's c-txid value of 4711.
 
-Servers MUST NOT ever use the special txid values, txid-match, txid-request, txid-unknown (e.g., "=", "?", or "!") as actual
+Servers MUST NOT use the special txid values, txid-match,
+txid-request, txid-unknown (e.g., "=", "?", or "!") as actual
 txid values.
 
 ## Candidate Datastore Configuration Retrieval
@@ -957,7 +972,7 @@ txid values in the candidate datastore get the same txid values
 as in the running datastore when this operation runs.
 
 ``<copy-config>``:
-: The `<copy-config>`` operation can be used to copy contents between
+: The ``<copy-config>`` operation can be used to copy contents between
 datastores.  The server MUST ensure the txid values are retained
 and changed as if the data being copied had been sent in through an
 edit-config operation.
@@ -1163,15 +1178,9 @@ The last-modified attribute values are yang:date-and-time values as
 defined in ietf-yang-types.yang, {{RFC6991}}.
 
 "2022-04-01T12:34:56.123456Z" is an example of what this time stamp
-format looks like.  It is RECOMMENDED that the time stamps provided
-by the server closely match the real world clock.  Servers
-MUST ensure the timestamps provided are monotonously increasing for
-as long as the server's operation is maintained.
-
-It is RECOMMENDED that server implementors choose the number of
-digits of precision used for the fractional second timestamps
-high enough so that there is no risk that multiple transactions on
-the server would get the same timestamp.
+format looks like.  Servers MUST ensure the timestamps provided are
+strictly increasing for as long as the server's operation is
+maintained.
 
 It is RECOMMENDED that the same last-modified txid values are used
 across all management interfaces (i.e. NETCONF and any other the
@@ -1311,12 +1320,6 @@ In server messages sent to a client:
 
 ### With etag
 
-NOTE: In the etag examples below, we have chosen to use a txid
-value consisting of "nc" followed by a monotonously increasing
-integer.  This is convenient for the reader trying to make sense
-of the examples, but is not an implementation requirement.  An
-etag would often be implemented as a "random" string of characters.
-
 To retrieve etag attributes across the entire NETCONF server
 configuration, a client might send:
 
@@ -1332,6 +1335,52 @@ configuration, a client might send:
 ~~~
 
 The server's reply might then be:
+
+~~~ xml
+<rpc-reply message-id="1"
+           xmlns="urn:ietf:params:xml:ns:netconf:base:1.0"
+           xmlns:txid="urn:ietf:params:xml:ns:netconf:txid:1.0">
+  <data txid:etag="fd6a52d9-5152-811c-a117-b99d3b723c93">
+    <acls xmlns=
+            "urn:ietf:params:xml:ns:yang:ietf-access-control-list"
+          txid:etag="fd6a52d9-5152-811c-a117-b99d3b723c93">
+      <acl txid:etag="2c4b50e4-4711-49f8-a2b2-2e20aebe120f">
+        <name>A1</name>
+        <aces txid:etag="2c4b50e4-4711-49f8-a2b2-2e20aebe120f">
+          <ace txid:etag="2c4b50e4-4711-49f8-a2b2-2e20aebe120f">
+            <name>R1</name>
+            <matches>
+              <ipv4>
+                <protocol>17</protocol>
+              </ipv4>
+            </matches>
+            <actions>
+              <forwarding xmlns:acl=
+              "urn:ietf:params:xml:ns:yang:ietf-access-control-list">
+                acl:accept
+              <forwarding>
+            </actions>
+          </ace>
+        </aces>
+      </acl>
+  ...
+~~~
+
+It is up to the server implementor to decide on the format of the
+etag txid value.  In the example above, the server used "random"
+UUID values.  This is one valid implementation choice.
+
+For the etag txid examples below, we have chosen to use an etag txid
+value consisting of "nc" (or "cli" in some cases) followed by a
+strictly increasing integer.  This is another valid implementation
+choice.  This format is convenient for the reader trying to make
+sense of the examples, but is not an implementation requirement.
+
+Clients have to be prepared to receive etag txid values in different
+formats.
+
+Repeating the example above, but now with a server returning more
+human readable etag txid values, the server's reply might be:
 
 ~~~ xml
 <rpc-reply message-id="1"
@@ -2670,6 +2719,21 @@ registry.
 ~~~
 
 # Changes
+
+## Major changes in -07 since -06
+
+* Changed "monotonically increasing" to "strictly increasing" in
+multiple locations. Removed recommendation about timestamps in the
+last-modified txid mechanism being similar to wall clock time.
+
+* Removed two clumsily formulated sentences stating that clients MUST NOT infer temporal order from txid values.  The remaining wording states that some servers use sequences of txid values that may appear random to outside observers.
+
+* Added brief explanation that entitlements are sometimes also
+known as "licenses".
+
+* Added introductory section on "How to Read this Document"
+
+* Added an example to highlight that the etag txid values can have different formats, and do not need to consist of strictly increasing integers, as in most of the examples.
 
 ## Major changes in -06 since -05
 

@@ -14,7 +14,7 @@ module ietf-netconf-txid-nmda-compare {
   import ietf-netconf-txid {
     prefix ietf-netconf-txid;
     reference
-      "RFC XXXX: Xxxxxxxxx";
+      "RFC XXXX: Transaction ID Mechanism for NETCONF";
   }
 
   organization
@@ -55,7 +55,7 @@ module ietf-netconf-txid-nmda-compare {
     description
       "Initial revision";
     reference
-      "RFC XXXX: Xxxxxxxxx";
+      "RFC XXXX: Transaction ID Mechanism for NETCONF";
   }
 
   augment "/cmp:compare/cmp:input" {

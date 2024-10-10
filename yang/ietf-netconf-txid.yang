@@ -58,7 +58,7 @@ module ietf-netconf-txid {
     description
       "Initial revision";
     reference
-      "RFC XXXX: Xxxxxxxxx";
+      "RFC XXXX: Transaction ID Mechanism for NETCONF";
   }
 
   feature last-modified {

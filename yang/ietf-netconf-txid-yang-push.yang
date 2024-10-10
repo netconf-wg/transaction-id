@@ -19,7 +19,7 @@ module ietf-netconf-txid-yang-push {
   import ietf-netconf-txid {
     prefix ietf-netconf-txid;
     reference
-      "RFC XXXX: Xxxxxxxxx";
+      "RFC XXXX: Transaction ID Mechanism for NETCONF";
   }
 
   organization
@@ -60,7 +60,7 @@ module ietf-netconf-txid-yang-push {
     description
       "Initial revision";
     reference
-      "RFC XXXX: Xxxxxxxxx";
+      "RFC XXXX: Transaction ID Mechanism for NETCONF";
   }
 
   augment "/sn:establish-subscription/sn:input" {
