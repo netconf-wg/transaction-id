@@ -143,14 +143,9 @@ This document uses the terminology defined in
 
 In addition, this document defines the following terms:
 
-Versioned node:
-: A node in the instantiated YANG data tree for which
-the server maintains a transaction id (txid) value.
-
-Transaction-id Mechanism:
-: A protocol implementation that fulfills the principles described in
-the first part, [NETCONF Txid Extension](#netconf-txid-extension), of
-this document.  See also Etag and Last-Modified.
+C-txid:
+: Client side transaction-id, i.e., a txid value maintained or provided
+by a NETCONF client.
 
 Etag:
 : One protocol mechanism that conforms to the definitions in the
@@ -164,21 +159,28 @@ Last-Modified:
 document.  Also the name of the XML attribute that this mechanism
 uses in the NETCONF stream, and the message header used in RESTCONF.
 
-Txid:
-: Abbreviation of Transaction-id
-
-C-txid:
-: Client side transaction-id, i.e., a txid value maintained or provided
-by a NETCONF client.
-
 S-txid:
 : Server side transaction-id, i.e., a txid value maintained or sent by
 a NETCONF server.
+
+Transaction-id Mechanism:
+: A protocol implementation that fulfills the principles described in
+the first part, [NETCONF Txid Extension](#netconf-txid-extension), of
+this document.  See also Etag and Last-Modified.
+
+Txid:
+: Abbreviation of Transaction-id.  A transaction-id is an UTF-8
+string of characters.  The specific format depends on the protocol
+mechanism used (e.g. Etag or Last-Modified).
 
 Txid History:
 : Temporally ordered list of txid values used by the server.  Allows
 the server to determine if a given txid occurred more recently than
 another txid.
+
+Versioned node:
+: A node in the instantiated YANG data tree for which
+the server maintains a transaction id (txid) value.
 
 # NETCONF Txid Extension
 
@@ -524,7 +526,7 @@ Versioned Node.
 ~~~
 {:#fig-vn title="Versioned Nodes.  Server lookup of dscp txid gives
 4711, as closest ancestor is ace R7 with txid 4711.  Since the
-server's and client's txid match, the etag value is '=', and
+server's and client's txid match, the txid value is '=', and
 the leaf value is pruned."}
 
 Here, the server looks up the closest ancestor node that is a
@@ -2734,6 +2736,8 @@ known as "licenses".
 * Added introductory section on "How to Read this Document"
 
 * Added an example to highlight that the etag txid values can have different formats, and do not need to consist of strictly increasing integers, as in most of the examples.
+
+* Changed WG URLs in YANG modules to new datatracker format, e.g. https://datatracker.ietf.org/wg/netconf/
 
 ## Major changes in -06 since -05
 

@@ -26,7 +26,7 @@ module ietf-netconf-txid-yang-push {
     "IETF NETCONF (Network Configuration) Working Group";
 
   contact
-    "WG Web:   <http://tools.ietf.org/wg/netconf/>
+    "WG Web:   <https://datatracker.ietf.org/wg/netconf/>
      WG List:  <netconf@ietf.org>
 
      Author:   Jan Lindblad
