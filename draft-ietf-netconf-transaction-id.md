@@ -41,6 +41,7 @@ informative:
   RFC6020:
   RFC7232:
   RFC7952:
+  RFC8519:
 
 author:
   - ins: J. Lindblad
@@ -128,6 +129,8 @@ The common and general principles for all transaction-id mechanisms are defined 
 Next after the central chapter with the definitions of the Transaction-id handling mechanisms, there is an extensive chapter with usage examples.  This chapter is called [Txid Mechanism Examples](#txid-mechanism-examples).
 
 Towards the end, there is also a chapter with [YANG Modules](#yang-modules).  These are necessary for a correct implementation, but reading them will not provide much for the understanding of this document.  The mechanisms defined in this document are largely on the NETCONF protocol level, and most aspects cannot be described by YANG modules.
+
+The examples found throughout this document are referencing acls, aces, dscp and many other related names defined in YANG modules. Interested readers can find definitions of the relevant YANG structures in {{RFC8519}}. For the purposes of understanding this document, going there is entirely optional.
 
 # Conventions and Definitions
 
@@ -240,7 +243,14 @@ server rejects the transaction with a specific error message.
 Subscribe to configuration changes with txid return:
 : When a client subscribes to configuration change updates through
 YANG-Push, it may be interested to also learn the updated txid
-metadata for the changed data trees.
+metadata for the changed data trees, and recognize the YANG-Push
+echo of its own changes.
+
+Compare datastores:
+: When a client compares datastores, it may be interested to get the
+latest txid values of the nodes being compared.
+
+This chapter will also provide some details about how to handle the (or a) candidate datastore, dependencies within a transaction, and txid handling in a few other NETCONF operations (e.g. copy-config).
 
 ## General Txid Principles {#sec-principles}
 
@@ -263,7 +273,11 @@ txid values.
 Regardless of whether a server declares the Versioned Nodes or not,
 the set of Versioned Nodes in the server's YANG tree MUST remain
 constant, except at system redefining events, such as software upgrades
-or entitlement (a.k.a. "license") installations or removals.
+or entitlement (a.k.a. "license") installations or removals. If a
+Versioned Node was allowed to change status to a non-Versioned Node
+(or vice versa), the client would no longer be able to reason about
+the change. The effective txid of some nodes would sometimes seem to
+change even when no configuration change had taken place.
 
 The server returning txid values for the Versioned Nodes
 MUST ensure that the txid values are changed every time there has
@@ -368,7 +382,7 @@ random to outside observers.
 
 Clients MAY request the server to return txid values in the response
 by adding one or more txid values received previously in ``<get-config>`` or
-``<get-data>`` requests.  Txid values sent by a client are refered to as
+``<get-data>`` requests.  Txid values sent by a client are referred to as
 c-txid.
 
 When a client sends a c-txid value of a node that matches the
@@ -609,7 +623,7 @@ successfully executed.  As all the txid values specified by the
 client matched those on the server, the transaction was successfully
 executed." #base-edit-config}
 
-After the above edit-config, the client might issues a get-config to
+After the above edit-config, the client might issue a get-config to
 observe the change.  It would look like this:
 
 ~~~ call-flow
@@ -747,6 +761,23 @@ Txid History).  Some servers may have a Txid History size of zero.
 A client specifying a single c-txid value for a change like the one
 above towards such a server would not be able to get the transaction
 accepted.
+
+Choosing a Txid History size greater than zero in a server is an
+optimization allowing clients to be less explicit, saving both on
+communications and processing. Servers implementing a Txid Mechanism
+using txid values with a natural order (e.g. strictly increasing
+integers or timestamps) may be able to implement an infinite history
+very easily. Other schemes might need to store recently used txids in
+a database.
+
+It is RECOMMENDED that server implementors that implement Txid History
+at all choose a Txid History size that is at least large enough to
+hold twice as many txids as this type of server normally experiences
+between the typical connection interval by clients, and not less than
+100. In a server near the core of a network, the number of transactions
+would often be high, but the connection interval by clients typically
+short. Servers closer to the edge might see fewer transactions, but
+also be visited by clients less often.
 
 ## Candidate Datastore Transactions
 
@@ -995,7 +1026,7 @@ an rpc-error as described in section
 ## YANG-Push Subscriptions
 
 A client issuing a YANG-Push establish-subscription or
-modify-subscription request or configures a YANG-Push subscription
+modify-subscription request or configuring a YANG-Push subscription
 towards a server that supports
 ietf-netconf-txid-yang-push.yang MAY request that the server
 provides updated txid values in YANG-Push on-change subscription
@@ -1223,7 +1254,7 @@ of edit-config or edit-data requests, in which case they indicate
 the client's txid value of that element.
 
 Clients MAY request servers that also implement YANG-Push to return
-configuration change subsription updates with etag or
+configuration change subscription updates with etag or
 last-modified txid attributes.  The client requests this service by
 adding a with-etag or with-last-modified flag with the value 'true'
 to the subscription request or yang-push configuration.  The server
@@ -1231,7 +1262,7 @@ MUST then return such txids on the YANG Patch edit tag and to the
 child elements of the value tag.  The txid attribute on the edit tag
 reflects the txid associated with the changes encoded in this edit
 section, as well as parent nodes.  Later edit sections in the same
-push-update or push-change-update may still supercede the txid value
+push-update or push-change-update may still supersede the txid value
 for some or all of the nodes in the current edit section.
 
 Servers returning txid values in get-config, edit-config, get-data,
@@ -2624,7 +2655,7 @@ configuration to which it has no access rights.
 For example, a client may notice that the root node txid has changed
 while none of the subtrees it has access to have changed, and thereby
 conclude that someone else has made a change to some part of the
-configuration that is not acessible by the client.
+configuration that is not accessible by the client.
 
 ### Hash-based Txid Algorithms
 
@@ -2660,9 +2691,11 @@ the actual configuration.
 
 ## NETCONF Capability URN
 
-This document requets IANA to register the following capability identifier URN in
+This document requests IANA to register the following capability identifier URN in
 the 'Network Configuration Protocol (NETCONF) Capability URNs'
 registry:
+
+RFC Ed.: replace XXXX with actual RFC number and remove this note.
 
 ~~~
 Capability: :txid
@@ -2699,6 +2732,8 @@ This document requests IANA to register three module names in the "YANG
 Module Names" subregistry {{RFC6020}} within the "YANG Parameters"
 registry.
 
+RFC Ed.: replace XXXX with actual RFC number and remove this note.
+
 ~~~
   name: ietf-netconf-txid
   prefix: ietf-netconf-txid
@@ -2720,7 +2755,21 @@ registry.
   RFC: XXXX
 ~~~
 
-# Changes
+# Changes (to be deleted by RFC Editor)
+
+## Major changes in -08 since -07
+
+* Added brief motivation to why the server's set of Versioned Nodes
+must not change unless the server at a discontinuity point
+(software upgrades, etc.)
+
+* Added a few lines to the beginning of chapter 3 to better describe
+the contents later in that chapter.
+
+* Added some guidance regarding the recommended Txid History size.
+
+* Mention that examples are based on the RFC8519 YANG module for
+Network Access Control Lists.
 
 ## Major changes in -07 since -06
 
@@ -2773,7 +2822,7 @@ the algorithm both more efficient and less verbose.  Servers may
 still choose a Txid History size of zero, which makes the server
 behavior the same as in earlier versions of this document.
 Implementations that use txids consisting of a monotonically
-increasing integer or timestamp will be able to determine the sequnce
+increasing integer or timestamp will be able to determine the sequence
 of transactions in the history directly, making this trivially simple
 to implement.
 
@@ -2933,4 +2982,5 @@ The author wishes to thank Benoît Claise for making this work happen,
 and the following individuals, who all provided helpful comments
 and reviews:
 Per Andersson, James Cumming, Kent Watsen, Andy Bierman, Robert Wilton,
-Qiufang Ma, Jason Sterne, Robert Varga, Reshad Rahman and Med Boucadair.
+Qiufang Ma, Jason Sterne, Robert Varga, Reshad Rahman, Med Boucadair
+and Bing Liu.
