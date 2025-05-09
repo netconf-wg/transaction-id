@@ -2,10 +2,10 @@
 stand_alone: true
 ipr: trust200902
 title: "Transaction ID Mechanism for NETCONF"
-abbrev: "NCTID"
+abbrev: "NETCONF Txid"
 category: std
 submissiontype: IETF
-area: General
+area: ops
 workgroup: NETCONF
 
 docname: draft-ietf-netconf-transaction-id-latest
@@ -35,6 +35,7 @@ normative:
   RFC8641:
   RFC8791:
   RFC9144:
+  RFC9562:
 
 informative:
   RFC3688:
@@ -1373,10 +1374,10 @@ The server's reply might then be:
 <rpc-reply message-id="1"
            xmlns="urn:ietf:params:xml:ns:netconf:base:1.0"
            xmlns:txid="urn:ietf:params:xml:ns:netconf:txid:1.0">
-  <data txid:etag="fd6a52d9-5152-811c-a117-b99d3b723c93">
+  <data txid:etag="fd6a52d9-5152-411c-a117-b99d3b723c93">
     <acls xmlns=
             "urn:ietf:params:xml:ns:yang:ietf-access-control-list"
-          txid:etag="fd6a52d9-5152-811c-a117-b99d3b723c93">
+          txid:etag="fd6a52d9-5152-411c-a117-b99d3b723c93">
       <acl txid:etag="2c4b50e4-4711-49f8-a2b2-2e20aebe120f">
         <name>A1</name>
         <aces txid:etag="2c4b50e4-4711-49f8-a2b2-2e20aebe120f">
@@ -1401,7 +1402,7 @@ The server's reply might then be:
 
 It is up to the server implementor to decide on the format of the
 etag txid value.  In the example above, the server used "random"
-UUID values.  This is one valid implementation choice.
+UUIDv4 values {{RFC9562}}.  This is one valid implementation choice.
 
 For the etag txid examples below, we have chosen to use an etag txid
 value consisting of "nc" (or "cli" in some cases) followed by a
@@ -2639,7 +2640,7 @@ The YANG modules specified in this document define YANG types, groupings, struct
 
 The Network Configuration Access Control Model (NACM) [RFC8341] provides the means to restrict access for particular NETCONF or RESTCONF users to a preconfigured subset of all available NETCONF or RESTCONF protocol operations and content.
 
-In the YANG modules published with this document, there is no configuration, state data, new RPCs or notifications.  This document defines additional XML attributes and headers, however, that merit consideration from a security perspective.
+In the YANG modules published with this document, there is no configuration, state data, new RPCs, or notifications.  This document defines additional XML attributes and headers, however, that merit consideration from a security perspective.
 
 ## NACM Access Control
 
@@ -2741,7 +2742,7 @@ RFC Ed.: replace XXXX with actual RFC number and remove this note.
   maintained by IANA? N
   RFC: XXXX
 
-  name: ietf-netconf-txid-yp
+  name: ietf-netconf-txid-yang-push
   prefix: ietf-netconf-txid-yp
   namespace: urn:ietf:params:xml:ns:yang:ietf-netconf-txid-yang-push
   maintained by IANA? N
