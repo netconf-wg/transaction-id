@@ -1,0 +1,43 @@
+<rpc-reply
+    xmlns="urn:ietf:params:xml:ns:netconf:base:1.0"
+    message-id="101">
+  <differences
+    xmlns="urn:ietf:params:xml:ns:yang:ietf-nmda-compare"
+    xmlns:or="urn:ietf:params:xml:ns:yang:ietf-origin"
+    xmlns:ietf-netconf-txid-nmda-compare=
+      "urn:ietf:params:xml:ns:yang:ietf-netconf-txid-nmda-compare"
+    xmlns:if="urn:ietf:params:xml:ns:yang:ietf-interfaces">
+    <yang-patch>
+      <patch-id>interface status</patch-id>
+      <comment>
+        diff between operational (source) and intended (target),
+        with txid values taken from intended.
+      </comment>
+      <edit>
+        <edit-id>1</edit-id>
+        <operation>replace</operation>
+        <target>/ietf-interfaces:interface=eth0/enabled</target>
+        <value>
+          <if:enabled>false</if:enabled>
+        </value>
+        <source-value>
+          <if:enabled or:origin="or:learned">true</if:enabled>
+        </source-value>
+        <ietf-netconf-txid-nmda-compare:etag-value>
+          4004
+        </ietf-netconf-txid-nmda-compare:etag-value>
+      </edit>
+      <edit>
+        <edit-id>2</edit-id>
+        <operation>create</operation>
+        <target>/ietf-interfaces:interface=eth0/description</target>
+        <value>
+          <if:description>ip interface</if:description>
+        </value>
+        <ietf-netconf-txid-nmda-compare:etag-value>
+          8008
+        </ietf-netconf-txid-nmda-compare:etag-value>
+      </edit>
+    </yang-patch>
+  </differences>
+</rpc-reply>

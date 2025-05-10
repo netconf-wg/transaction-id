@@ -1358,46 +1358,13 @@ To retrieve etag attributes across the entire NETCONF server
 configuration, a client might send:
 
 ~~~ xml
-<rpc xmlns="urn:ietf:params:xml:ns:netconf:base:1.0" message-id="1"
-     xmlns:txid="urn:ietf:params:xml:ns:netconf:txid:1.0">
-  <get-config txid:etag="?">
-    <source>
-      <running/>
-    </source>
-  </get-config>
-</rpc>
+{::include examples/ex-01-request.xml}
 ~~~
 
 The server's reply might then be:
 
 ~~~ xml
-<rpc-reply message-id="1"
-           xmlns="urn:ietf:params:xml:ns:netconf:base:1.0"
-           xmlns:txid="urn:ietf:params:xml:ns:netconf:txid:1.0">
-  <data txid:etag="fd6a52d9-5152-411c-a117-b99d3b723c93">
-    <acls xmlns=
-            "urn:ietf:params:xml:ns:yang:ietf-access-control-list"
-          txid:etag="fd6a52d9-5152-411c-a117-b99d3b723c93">
-      <acl txid:etag="2c4b50e4-4711-49f8-a2b2-2e20aebe120f">
-        <name>A1</name>
-        <aces txid:etag="2c4b50e4-4711-49f8-a2b2-2e20aebe120f">
-          <ace txid:etag="2c4b50e4-4711-49f8-a2b2-2e20aebe120f">
-            <name>R1</name>
-            <matches>
-              <ipv4>
-                <protocol>17</protocol>
-              </ipv4>
-            </matches>
-            <actions>
-              <forwarding xmlns:acl=
-              "urn:ietf:params:xml:ns:yang:ietf-access-control-list">
-                acl:accept
-              <forwarding>
-            </actions>
-          </ace>
-        </aces>
-      </acl>
-  ...
+{::include examples/ex-01-response.xml}
 ~~~
 
 It is up to the server implementor to decide on the format of the
@@ -1417,135 +1384,21 @@ Repeating the example above, but now with a server returning more
 human readable etag txid values, the server's reply might be:
 
 ~~~ xml
-<rpc-reply message-id="1"
-           xmlns="urn:ietf:params:xml:ns:netconf:base:1.0"
-           xmlns:txid="urn:ietf:params:xml:ns:netconf:txid:1.0">
-  <data txid:etag="nc5152">
-    <acls xmlns=
-            "urn:ietf:params:xml:ns:yang:ietf-access-control-list"
-          txid:etag="nc5152">
-      <acl txid:etag="nc4711">
-        <name>A1</name>
-        <aces txid:etag="nc4711">
-          <ace txid:etag="nc4711">
-            <name>R1</name>
-            <matches>
-              <ipv4>
-                <protocol>17</protocol>
-              </ipv4>
-            </matches>
-            <actions>
-              <forwarding xmlns:acl=
-              "urn:ietf:params:xml:ns:yang:ietf-access-control-list">
-                acl:accept
-              <forwarding>
-            </actions>
-          </ace>
-        </aces>
-      </acl>
-      <acl txid:etag="nc5152">
-        <name>A2</name>
-        <aces txid:etag="nc5152">
-          <ace txid:etag="nc4711">
-            <name>R7</name>
-            <matches>
-              <ipv4>
-                <dscp>10</dscp>
-              </ipv4>
-            </matches>
-            <actions>
-              <forwarding xmlns:acl=
-              "urn:ietf:params:xml:ns:yang:ietf-access-control-list">
-                acl:accept
-              <forwarding>
-            </actions>
-          </ace>
-          <ace txid:etag="nc5152">
-            <name>R8</name>
-            <matches>
-              <udp>
-                <source-port>
-                  <port>22</port>
-                </source-port>
-              </udp>
-            </matches>
-            <actions>
-              <forwarding xmlns:acl=
-              "urn:ietf:params:xml:ns:yang:ietf-access-control-list">
-                acl:accept
-              <forwarding>
-            </actions>
-          </ace>
-          <ace txid:etag="nc5152">
-            <name>R9</name>
-            <matches>
-              <tcp>
-                <source-port>
-                  <port>22</port>
-                </source-port>
-              </tcp>
-            </matches>
-            <actions>
-              <forwarding xmlns:acl=
-              "urn:ietf:params:xml:ns:yang:ietf-access-control-list">
-                acl:accept
-              <forwarding>
-            </actions>
-          </ace>
-        </aces>
-      </acl>
-    </acls>
-    <nacm xmlns="urn:ietf:params:xml:ns:yang:ietf-netconf-acm"
-          txid:etag="nc3072">
-      <groups txid:etag="nc3072">
-        <group txid:etag="nc3072">
-          <name>admin</name>
-          <user-name>sakura</user-name>
-          <user-name>joe</user-name>
-        </group>
-      </groups>
-    </nacm>
-  </data>
-</rpc>
+{::include examples/ex-01-response-human-readable.xml}
 ~~~
 
 To retrieve etag attributes for a specific ACL using an xpath
 filter, a client might send:
 
 ~~~ xml
-<rpc xmlns="urn:ietf:params:xml:ns:netconf:base:1.0" message-id="2"
-     xmlns:txid="urn:ietf:params:xml:ns:netconf:txid:1.0">
-  <get-config>
-    <source>
-      <running/>
-    </source>
-    <filter type="xpath"
-      xmlns:acl=
-        "urn:ietf:params:xml:ns:yang:ietf-access-control-list"
-      select="/acl:acls/acl:acl[acl:name='A1']"
-      txid:etag="?"/>
-  </get-config>
-</rpc>
+{::include examples/ex-02-request.xml}
 ~~~
 
 To retrieve etag attributes for "acls", but not for "nacm",
 a client might send:
 
 ~~~ xml
-<rpc xmlns="urn:ietf:params:xml:ns:netconf:base:1.0" message-id="3"
-     xmlns:txid="urn:ietf:params:xml:ns:netconf:txid:1.0">
-  <get-config>
-    <source>
-      <running/>
-    </source>
-    <filter>
-      <acls
-        xmlns="urn:ietf:params:xml:ns:yang:ietf-access-control-list"
-        txid:etag="?"/>
-      <nacm xmlns="urn:ietf:params:xml:ns:yang:ietf-netconf-acm"/>
-    </filter>
-  </get-config>
-</rpc>
+{::include examples/ex-03-request.xml}
 ~~~
 
 If the server considers "acls", "acl", "aces" and "acl" to be
@@ -1553,95 +1406,7 @@ Versioned Nodes, the server's response to the request above
 might look like:
 
 ~~~ xml
-<rpc-reply message-id="3"
-           xmlns="urn:ietf:params:xml:ns:netconf:base:1.0"
-           xmlns:txid="urn:ietf:params:xml:ns:netconf:txid:1.0">
-  <data>
-    <acls xmlns=
-            "urn:ietf:params:xml:ns:yang:ietf-access-control-list"
-          txid:etag="nc5152">
-      <acl txid:etag="nc4711">
-        <name>A1</name>
-        <aces txid:etag="nc4711">
-          <ace txid:etag="nc4711">
-            <name>R1</name>
-            <matches>
-              <ipv4>
-                <protocol>17</protocol>
-              </ipv4>
-            </matches>
-            <actions>
-              <forwarding xmlns:acl=
-              "urn:ietf:params:xml:ns:yang:ietf-access-control-list">
-                acl:accept
-              <forwarding>
-            </actions>
-          </ace>
-        </aces>
-      </acl>
-      <acl txid:etag="nc5152">
-        <name>A2</name>
-        <aces txid:etag="nc5152">
-          <ace txid:etag="nc4711">
-            <name>R7</name>
-            <matches>
-              <ipv4>
-                <dscp>10</dscp>
-              </ipv4>
-            </matches>
-            <actions>
-              <forwarding xmlns:acl=
-              "urn:ietf:params:xml:ns:yang:ietf-access-control-list">
-                acl:accept
-              <forwarding>
-            </actions>
-          </ace>
-          <ace txid:etag="nc5152">
-            <name>R8</name>
-            <matches>
-              <udp>
-                <source-port>
-                  <port>22</port>
-                </source-port>
-              </udp>
-            </matches>
-            <actions>
-              <forwarding xmlns:acl=
-              "urn:ietf:params:xml:ns:yang:ietf-access-control-list">
-                acl:accept
-              <forwarding>
-            </actions>
-          </ace>
-          <ace txid:etag="nc5152">
-            <name>R9</name>
-            <matches>
-              <tcp>
-                <source-port>
-                  <port>22</port>
-                </source-port>
-              </tcp>
-            </matches>
-            <actions>
-              <forwarding xmlns:acl=
-              "urn:ietf:params:xml:ns:yang:ietf-access-control-list">
-                acl:accept
-              <forwarding>
-            </actions>
-          </ace>
-        </aces>
-      </acl>
-    </acls>
-    <nacm xmlns="urn:ietf:params:xml:ns:yang:ietf-netconf-acm"/>
-      <groups>
-        <group>
-          <name>admin</name>
-          <user-name>sakura</user-name>
-          <user-name>joe</user-name>
-        </group>
-      </groups>
-    </nacm>
-  </data>
-</rpc>
+{::include examples/ex-03-response.xml}
 ~~~
 
 ### With last-modified
@@ -1650,20 +1415,7 @@ To retrieve last-modified attributes for "acls", but not for "nacm",
 a client might send:
 
 ~~~ xml
-<rpc xmlns="urn:ietf:params:xml:ns:netconf:base:1.0" message-id="4"
-     xmlns:txid="urn:ietf:params:xml:ns:netconf:txid:1.0">
-  <get-config>
-    <source>
-      <running/>
-    </source>
-    <filter>
-      <acls
-        xmlns="urn:ietf:params:xml:ns:yang:ietf-access-control-list"
-        txid:last-modified="?"/>
-      <nacm xmlns="urn:ietf:params:xml:ns:yang:ietf-netconf-acm"/>
-    </filter>
-  </get-config>
-</rpc>
+{::include examples/ex-04-request.xml}
 ~~~
 
 If the server considers "acls", "acl", "aces" and "acl" to be
@@ -1671,95 +1423,7 @@ Versioned Nodes, the server's response to the request above
 might look like:
 
 ~~~ xml
-<rpc-reply message-id="4"
-           xmlns="urn:ietf:params:xml:ns:netconf:base:1.0"
-           xmlns:txid="urn:ietf:params:xml:ns:netconf:txid:1.0">
-  <data>
-    <acls
-      xmlns="urn:ietf:params:xml:ns:yang:ietf-access-control-list"
-      txid:last-modified="2022-04-01T12:34:56.789012Z">
-      <acl txid:last-modified="2022-03-20T16:20:11.333444Z">
-        <name>A1</name>
-        <aces txid:last-modified="2022-03-20T16:20:11.333444Z">
-          <ace txid:last-modified="2022-03-20T16:20:11.333444Z">
-            <name>R1</name>
-            <matches>
-              <ipv4>
-                <protocol>17</protocol>
-              </ipv4>
-            </matches>
-            <actions>
-              <forwarding xmlns:acl=
-              "urn:ietf:params:xml:ns:yang:ietf-access-control-list">
-                acl:accept
-              <forwarding>
-            </actions>
-          </ace>
-        </aces>
-      </acl>
-      <acl txid:last-modified="2022-04-01T12:34:56.789012Z">
-        <name>A2</name>
-        <aces txid:last-modified="2022-04-01T12:34:56.789012Z">
-          <ace txid:last-modified="2022-03-20T16:20:11.333444Z">
-            <name>R7</name>
-            <matches>
-              <ipv4>
-                <dscp>10</dscp>
-              </ipv4>
-            </matches>
-            <actions>
-              <forwarding xmlns:acl=
-              "urn:ietf:params:xml:ns:yang:ietf-access-control-list">
-                acl:accept
-              <forwarding>
-            </actions>
-          </ace>
-          <ace txid:last-modified="2022-04-01T12:34:56.789012Z">
-            <name>R8</name>
-            <matches>
-              <udp>
-                <source-port>
-                  <port>22</port>
-                </source-port>
-              </udp>
-            </matches>
-            <actions>
-              <forwarding xmlns:acl=
-              "urn:ietf:params:xml:ns:yang:ietf-access-control-list">
-                acl:accept
-              <forwarding>
-            </actions>
-          </ace>
-          <ace txid:last-modified="2022-04-01T12:34:56.789012Z">
-            <name>R9</name>
-            <matches>
-              <tcp>
-                <source-port>
-                  <port>22</port>
-                </source-port>
-              </tcp>
-            </matches>
-            <actions>
-              <forwarding xmlns:acl=
-              "urn:ietf:params:xml:ns:yang:ietf-access-control-list">
-                acl:accept
-              <forwarding>
-            </actions>
-          </ace>
-        </aces>
-      </acl>
-    </acls>
-    <nacm xmlns="urn:ietf:params:xml:ns:yang:ietf-netconf-acm"/>
-      <groups>
-        <group>
-          <name>admin</name>
-          <user-name>sakura</user-name>
-          <user-name>joe</user-name>
-        </group>
-      </groups>
-    </nacm>
-  </data>
-</rpc>
+{::include examples/ex-04-response.xml}
 ~~~
 
 ## Configuration Response Pruning
@@ -1772,27 +1436,7 @@ To retrieve only changes for "acls" that do not have the
 last known etag txid value, a client might send:
 
 ~~~ xml
-<rpc xmlns="urn:ietf:params:xml:ns:netconf:base:1.0" message-id="6"
-     xmlns:txid="urn:ietf:params:xml:ns:netconf:txid:1.0">
-  <get-config>
-    <source>
-      <running/>
-    </source>
-    <filter>
-      <acls
-        xmlns="urn:ietf:params:xml:ns:yang:ietf-access-control-list"
-        txid:etag="nc5152">
-        <acl txid:etag="nc4711">
-          <name>A1</name>
-          <aces txid:etag="nc4711"/>
-        </acl>
-        <acl txid:etag="nc5152">
-          <name>A2</name>
-          <aces txid:etag="nc5152"/>
-        </acl>
-    </filter>
-  </get-config>
-</rpc>
+{::include examples/ex-06-request.xml}
 ~~~
 
 Assuming the NETCONF server configuration is the same as
@@ -1800,85 +1444,14 @@ in the previous rpc-reply example, the server's response to request
 above might look like:
 
 ~~~ xml
-<rpc-reply message-id="6"
-           xmlns="urn:ietf:params:xml:ns:netconf:base:1.0"
-           xmlns:txid="urn:ietf:params:xml:ns:netconf:txid:1.0">
-  <data>
-    <acls
-      xmlns="urn:ietf:params:xml:ns:yang:ietf-access-control-list"
-      txid:etag="="/>
-  </data>
-</rpc>
+{::include examples/ex-06-response-no-change.xml}
 ~~~
 
 Or, if a configuration change has taken place under /acls since the
 client was last updated, the server's response may look like:
 
 ~~~ xml
-<rpc-reply message-id="6"
-           xmlns="urn:ietf:params:xml:ns:netconf:base:1.0"
-           xmlns:txid="urn:ietf:params:xml:ns:netconf:txid:1.0">
-  <data>
-    <acls
-      xmlns="urn:ietf:params:xml:ns:yang:ietf-access-control-list"
-      txid:etag="nc6614">
-      <acl txid:etag="=">
-        <name>A1</name>
-      </acl>
-      <acl txid:etag="nc6614">
-        <name>A2</name>
-        <aces txid:etag="nc6614">
-          <ace txid:etag="nc4711">
-            <name>R7</name>
-            <matches>
-              <ipv4>
-                <dscp>10</dscp>
-              </ipv4>
-            </matches>
-            <actions>
-              <forwarding xmlns:acl=
-              "urn:ietf:params:xml:ns:yang:ietf-access-control-list">
-                acl:accept
-              <forwarding>
-            </actions>
-          </ace>
-          <ace txid:etag="nc5152">
-            <name>R8</name>
-            <matches>
-              <ipv4>
-                <source-port>
-                  <port>22</port>
-                </source-port>
-              </ipv4>
-            </matches>
-            <actions>
-              <forwarding xmlns:acl=
-              "urn:ietf:params:xml:ns:yang:ietf-access-control-list">
-                acl:accept
-              <forwarding>
-            </actions>
-          </ace>
-          <ace txid:etag="nc6614">
-            <name>R9</name>
-            <matches>
-              <ipv4>
-                <source-port>
-                  <port>830</port>
-                </source-port>
-              </ipv4>
-            </matches>
-            <actions>
-              <forwarding xmlns:acl=
-              "urn:ietf:params:xml:ns:yang:ietf-access-control-list">
-                acl:accept
-              <forwarding>
-            </actions>
-          </ace>
-        </aces>
-      </acl>
-    </acls>
-  </data>
-</rpc>
+{::include examples/ex-06-response-changed.xml}
 ~~~
 
 In case the client provides a txid value for a non-versioned node,
@@ -1886,32 +1459,7 @@ the server needs to treat the node as having the same txid value as
 the closest ancestor that does have a txid value.
 
 ~~~ xml
-<rpc xmlns="urn:ietf:params:xml:ns:netconf:base:1.0" message-id="7"
-     xmlns:txid="urn:ietf:params:xml:ns:netconf:txid:1.0">
-  <get-config>
-    <source>
-      <running/>
-    </source>
-    <filter>
-      <acls
-        xmlns="urn:ietf:params:xml:ns:yang:ietf-access-control-list">
-        <acl>
-          <name>A2</name>
-          <aces>
-            <ace>
-              <name>R7</name>
-              <matches>
-                <ipv4>
-                  <dscp txid:etag="nc4711"/>
-                </ipv4>
-              </matches>
-            </ace>
-          </aces>
-        </acl>
-      </acls>
-    </filter>
-  </get-config>
-</rpc>
+{::include examples/ex-07-request.xml}
 ~~~
 
 If a txid value is specified for a leaf, and the txid value matches
@@ -1919,28 +1467,7 @@ If a txid value is specified for a leaf, and the txid value matches
 the server's Txid History), the leaf value is pruned.
 
 ~~~ xml
-<rpc-reply message-id="7"
-           xmlns="urn:ietf:params:xml:ns:netconf:base:1.0"
-           xmlns:txid="urn:ietf:params:xml:ns:netconf:txid:1.0">
-  <data>
-    <acls
-      xmlns="urn:ietf:params:xml:ns:yang:ietf-access-control-list">
-      <acl>
-        <name>A2</name>
-        <aces>
-          <ace>
-            <name>R7</name>
-            <matches>
-              <ipv4>
-                <dscp txid:etag="="/>
-              </ipv4>
-            </matches>
-          </ace>
-        </aces>
-      </acl>
-    </acls>
-  </data>
-</rpc-reply>
+{::include examples/ex-07-response.xml}
 ~~~
 
 ## Configuration Change
@@ -1948,138 +1475,21 @@ the server's Txid History), the leaf value is pruned.
 A client that wishes to update the ace R1 protocol to tcp might send:
 
 ~~~ xml
-<rpc xmlns="urn:ietf:params:xml:ns:netconf:base:1.0" message-id="8">
-  <edit-config xmlns="urn:ietf:params:xml:ns:netconf:base:1.0"
-               xmlns:ietf-netconf-txid=
-                "urn:ietf:params:xml:ns:yang:ietf-netconf-txid">
-    <target>
-      <running/>
-    </target>
-    <test-option>test-then-set</test-option>
-    <ietf-netconf-txid:with-etag>true</ietf-netconf-txid:with-etag>
-    <config>
-      <acls
-        xmlns="urn:ietf:params:xml:ns:yang:ietf-access-control-list"
-        txid:etag="nc5152">
-        <acl txid:etag="nc4711">
-          <name>A1</name>
-          <aces txid:etag="nc4711">
-            <ace txid:etag="nc4711">
-              <matches>
-                <ipv4>
-                  <protocol>6</protocol>
-                </ipv4>
-              </matches>
-              <actions>
-                <forwarding xmlns:acl=
-              "urn:ietf:params:xml:ns:yang:ietf-access-control-list">
-                  acl:accept
-                <forwarding>
-              </actions>
-            </ace>
-          </aces>
-        </acl>
-      </acls>
-    </config>
-  </edit-config>
-</rpc>
+{::include examples/ex-08-request.xml}
 ~~~
 
 The server would update the protocol leaf in the running datastore,
 and return an rpc-reply as follows:
 
 ~~~ xml
-<rpc-reply message-id="8"
-           xmlns="urn:ietf:params:xml:ns:netconf:base:1.0"
-           xmlns:txid="urn:ietf:params:xml:ns:netconf:txid:1.0">
-  <ok txid:etag="nc7688"/>
-</rpc-reply>
+{::include examples/ex-08-response.xml}
 ~~~
 
 A subsequent get-config request for "acls", with txid:etag="?" might
 then return:
 
 ~~~ xml
-<rpc-reply message-id="9"
-           xmlns="urn:ietf:params:xml:ns:netconf:base:1.0"
-           xmlns:txid="urn:ietf:params:xml:ns:netconf:txid:1.0">
-  <data>
-    <acls
-      xmlns="urn:ietf:params:xml:ns:yang:ietf-access-control-list"
-      txid:etag="nc7688">
-      <acl txid:etag="nc7688">
-        <name>A1</name>
-        <aces txid:etag="nc7688">
-          <ace txid:etag="nc7688">
-            <name>R1</name>
-            <matches>
-              <ipv4>
-                <protocol>6</protocol>
-              </ipv4>
-            </matches>
-            <actions>
-              <forwarding xmlns:acl=
-              "urn:ietf:params:xml:ns:yang:ietf-access-control-list">
-                acl:accept
-              <forwarding>
-            </actions>
-          </ace>
-        </aces>
-      </acl>
-      <acl txid:etag="nc6614">
-        <name>A2</name>
-        <aces txid:etag="nc6614">
-          <ace txid:etag="nc4711">
-            <name>R7</name>
-            <matches>
-              <ipv4>
-                <dscp>10</dscp>
-              </ipv4>
-            </matches>
-            <actions>
-              <forwarding xmlns:acl=
-              "urn:ietf:params:xml:ns:yang:ietf-access-control-list">
-                acl:accept
-              <forwarding>
-            </actions>
-          </ace>
-          <ace txid:etag="nc5152">
-            <name>R8</name>
-            <matches>
-              <udp>
-                <source-port>
-                  <port>22</port>
-                </source-port>
-              </udp>
-            </matches>
-            <actions>
-              <forwarding xmlns:acl=
-              "urn:ietf:params:xml:ns:yang:ietf-access-control-list">
-                acl:accept
-              <forwarding>
-            </actions>
-          </ace>
-          <ace txid:etag="nc6614">
-            <name>R9</name>
-            <matches>
-              <tcp>
-                <source-port>
-                  <port>830</port>
-                </source-port>
-              </tcp>
-            </matches>
-            <actions>
-              <forwarding xmlns:acl=
-              "urn:ietf:params:xml:ns:yang:ietf-access-control-list">
-                acl:accept
-              <forwarding>
-            </actions>
-          </ace>
-        </aces>
-      </acl>
-    </acls>
-  </data>
-</rpc>
+{::include examples/ex-09-response-no-change.xml}
 ~~~
 
 In case the server at this point received a configuration change from
@@ -2088,54 +1498,7 @@ acl A2, a subsequent get-config request for acls, with txid:etag="?"
 might then return:
 
 ~~~ xml
-<rpc-reply message-id="9"
-           xmlns="urn:ietf:params:xml:ns:netconf:base:1.0"
-           xmlns:txid="urn:ietf:params:xml:ns:netconf:txid:1.0">
-  <data>
-    <acls
-      xmlns="urn:ietf:params:xml:ns:yang:ietf-access-control-list"
-      txid:etag="cli2222">
-      <acl txid:etag="nc7688">
-        <name>A1</name>
-        <aces txid:etag="nc7688">
-          <ace txid:etag="nc7688">
-            <name>R1</name>
-            <matches>
-              <ipv4>
-                <protocol>6</protocol>
-              </ipv4>
-            </matches>
-            <actions>
-              <forwarding xmlns:acl=
-              "urn:ietf:params:xml:ns:yang:ietf-access-control-list">
-                acl:accept
-              <forwarding>
-            </actions>
-          </ace>
-        </aces>
-      </acl>
-      <acl txid:etag="cli2222">
-        <name>A2</name>
-        <aces txid:etag="cli2222">
-          <ace txid:etag="nc4711">
-            <name>R7</name>
-            <matches>
-              <ipv4>
-                <dscp>10</dscp>
-              </ipv4>
-            </matches>
-            <actions>
-              <forwarding xmlns:acl=
-              "urn:ietf:params:xml:ns:yang:ietf-access-control-list">
-                acl:accept
-              <forwarding>
-            </actions>
-          </ace>
-        </aces>
-      </acl>
-    </acls>
-  </data>
-</rpc>
+{::include examples/ex-09-response-oob-change.xml}
 ~~~
 
 ## Conditional Configuration Change
@@ -2147,28 +1510,7 @@ configuration with the server, at which point it received the etag
 acls, it might send:
 
 ~~~ xml
-<rpc xmlns="urn:ietf:params:xml:ns:netconf:base:1.0" message-id="10"
-     xmlns:nc="urn:ietf:params:xml:ns:netconf:base:1.0"
-     xmlns:txid="urn:ietf:params:xml:ns:netconf:txid:1.0"
-     xmlns:ietf-netconf-txid=
-       "urn:ietf:params:xml:ns:yang:ietf-netconf-txid">
-  <edit-config>
-    <target>
-      <running/>
-    </target>
-    <test-option>test-then-set</test-option>
-    <ietf-netconf-txid:with-etag>true</ietf-netconf-txid:with-etag>
-    <config>
-      <acls xmlns=
-          "urn:ietf:params:xml:ns:yang:ietf-access-control-list">
-        <acl nc:operation="delete"
-             txid:etag="nc7688">
-          <name>A1</name>
-        </acl>
-      </acls>
-    </config>
-  </edit-config>
-</rpc>
+{::include examples/ex-10-request.xml}
 ~~~
 
 If acl A1 now has the etag txid value "nc7688", as expected by the
@@ -2176,46 +1518,14 @@ client, the transaction goes through, and the server responds
 something like:
 
 ~~~ xml
-<rpc-reply message-id="10"
-           xmlns="urn:ietf:params:xml:ns:netconf:base:1.0"
-           xmlns:txid="urn:ietf:params:xml:ns:netconf:txid:1.0">
-  <ok txid:etag="nc8008"/>
-</rpc-reply>
+{::include examples/ex-10-response.xml}
 ~~~
 
 A subsequent get-config request for acls, with txid:etag="?" might
 then return:
 
 ~~~ xml
-<rpc-reply message-id="11"
-           xmlns="urn:ietf:params:xml:ns:netconf:base:1.0"
-           xmlns:txid="urn:ietf:params:xml:ns:netconf:txid:1.0">
-  <data>
-    <acls
-      xmlns="urn:ietf:params:xml:ns:yang:ietf-access-control-list"
-      txid:etag="nc8008">
-      <acl txid:etag="cli2222">
-        <name>A2</name>
-        <aces txid:etag="cli2222">
-          <ace txid:etag="nc4711">
-            <name>R7</name>
-            <matches>
-              <ipv4>
-                <dscp>10</dscp>
-              </ipv4>
-            </matches>
-            <actions>
-              <forwarding xmlns:acl=
-              "urn:ietf:params:xml:ns:yang:ietf-access-control-list">
-                acl:accept
-              <forwarding>
-            </actions>
-          </ace>
-        </aces>
-      </acl>
-    </acls>
-  </data>
-</rpc>
+{::include examples/ex-11-response-accepted.xml}
 ~~~
 
 In case acl A1 did not have the expected etag txid value "nc7688"
@@ -2224,28 +1534,7 @@ value found later in the server's Txid History, then the server
 rejects the transaction, and might send:
 
 ~~~ xml
-<rpc-reply xmlns="urn:ietf:params:xml:ns:netconf:base:1.0"
-           xmlns:acl=
-            "urn:ietf:params:xml:ns:yang:ietf-access-control-list"
-           xmlns:ietf-netconf-txid=
-             "urn:ietf:params:xml:ns:yang:ietf-netconf-txid"
-           message-id="11">
-  <rpc-error>
-    <error-type>protocol</error-type>
-    <error-tag>operation-failed</error-tag>
-    <error-severity>error</error-severity>
-    <error-info>
-      <ietf-netconf-txid:txid-value-mismatch-error-info>
-        <ietf-netconf-txid:mismatch-path>
-          /acl:acls/acl:acl[acl:name="A1"]
-        </ietf-netconf-txid:mismatch-path>
-        <ietf-netconf-txid:mismatch-etag-value>
-          cli6912
-        </ietf-netconf-txid:mismatch-etag-value>
-      </ietf-netconf-txid:txid-value-mismatch-error-info>
-    </error-info>
-  </rpc-error>
-</rpc-reply>
+{::include examples/ex-11-response-rejected.xml}
 ~~~
 
 ## Reading from the Candidate Datastore
@@ -2254,49 +1543,7 @@ Let's assume that a get-config towards the running datastore
 currently contains the following data and txid values:
 
 ~~~ xml
-<rpc-reply message-id="12"
-           xmlns="urn:ietf:params:xml:ns:netconf:base:1.0"
-           xmlns:txid="urn:ietf:params:xml:ns:netconf:txid:1.0">
-  <data>
-    <acls
-      xmlns="urn:ietf:params:xml:ns:yang:ietf-access-control-list"
-      txid:etag="nc4711">
-      <acl txid:etag="nc4711">
-        <name>A1</name>
-        <aces txid:etag="nc4711">
-          <ace txid:etag="nc4711">
-            <name>R1</name>
-            <matches>
-              <ipv4>
-                <protocol>17</protocol>
-              </ipv4>
-            </matches>
-            <actions>
-              <forwarding xmlns:acl=
-              "urn:ietf:params:xml:ns:yang:ietf-access-control-list">
-                acl:accept
-              <forwarding>
-            </actions>
-          </ace>
-          <ace txid:etag="nc2219">
-            <name>R2</name>
-            <matches>
-              <ipv4>
-                <dscp>21</dscp>
-              </ipv4>
-            </matches>
-            <actions>
-              <forwarding xmlns:acl=
-              "urn:ietf:params:xml:ns:yang:ietf-access-control-list">
-                acl:accept
-              <forwarding>
-            </actions>
-          </ace>
-        </aces>
-      </acl>
-    </acls>
-  </data>
-</rpc-reply>
+{::include examples/ex-12-request.xml}
 ~~~
 
 A client issues discard-changes (to make the candidate datastore
@@ -2306,48 +1553,7 @@ get-config with the txid-request attribute "?" set on the acl A1,
 the server might respond:
 
 ~~~ xml
-<rpc-reply message-id="13"
-           xmlns="urn:ietf:params:xml:ns:netconf:base:1.0"
-           xmlns:txid="urn:ietf:params:xml:ns:netconf:txid:1.0">
-  <data>
-    <acls
-      xmlns="urn:ietf:params:xml:ns:yang:ietf-access-control-list">
-      <acl txid:etag="!">
-        <name>A1</name>
-        <aces txid:etag="!">
-          <ace txid:etag="!">
-            <name>R1</name>
-            <matches>
-              <ipv4>
-                <protocol>6</protocol>
-              </ipv4>
-            </matches>
-            <actions>
-              <forwarding xmlns:acl=
-              "urn:ietf:params:xml:ns:yang:ietf-access-control-list">
-                acl:accept
-              <forwarding>
-            </actions>
-          </ace>
-          <ace txid:etag="nc2219">
-            <name>R2</name>
-            <matches>
-              <ipv4>
-                <dscp>21</dscp>
-              </ipv4>
-            </matches>
-            <actions>
-              <forwarding xmlns:acl=
-              "urn:ietf:params:xml:ns:yang:ietf-access-control-list">
-                acl:accept
-              <forwarding>
-            </actions>
-          </ace>
-        </aces>
-      </acl>
-    </acls>
-  </data>
-</rpc-reply>
+{::include examples/ex-13-response.xml}
 ~~~
 
 Here, the txid-unknown value "!" is sent by the server.  This
@@ -2372,24 +1578,13 @@ requests this by adding with-etag to the commit operation.
 For example, a client might send:
 
 ~~~ xml
-<rpc message-id="14"
-    xmlns="urn:ietf:params:xml:ns:netconf:base:1.0">
-    xmlns:ietf-netconf-txid=
-      "urn:ietf:params:xml:ns:yang:ietf-netconf-txid"
-  <commit>
-    <ietf-netconf-txid:with-etag>true</ietf-netconf-txid:with-etag>
-  </commit>
-</rpc>
+{::include examples/ex-14-request.xml}
 ~~~
 
 Assuming the server accepted the transaction, it might respond:
 
 ~~~ xml
-<rpc-reply message-id="14"
-    xmlns="urn:ietf:params:xml:ns:netconf:base:1.0"
-    xmlns:txid="urn:ietf:params:xml:ns:netconf:txid:1.0">
-  <ok txid:etag="nc8008"/>
-</rpc-reply>
+{::include examples/ex-14-response.xml}
 ~~~
 
 ## YANG-Push
@@ -2399,66 +1594,13 @@ subscriptions are annotated with the txid values.  The request might
 look like this:
 
 ~~~ xml
-<netconf:rpc message-id="16"
-             xmlns:netconf="urn:ietf:params:xml:ns:netconf:base:1.0">
-  <establish-subscription
-      xmlns=
-        "urn:ietf:params:xml:ns:yang:ietf-subscribed-notifications"
-      xmlns:yp="urn:ietf:params:xml:ns:yang:ietf-yang-push"
-      xmlns:ietf-netconf-txid-yp=
-        "urn:ietf:params:xml:ns:yang:ietf-txid-yang-push">
-    <yp:datastore
-        xmlns:ds="urn:ietf:params:xml:ns:yang:ietf-datastores">
-      ds:running
-    </yp:datastore>
-    <yp:datastore-xpath-filter
-        xmlns:acl=
-          "urn:ietf:params:xml:ns:yang:ietf-access-control-list">
-      /acl:acls
-    </yp:datastore-xpath-filter>
-    <yp:on-change/>
-    <ietf-netconf-txid-yp:with-etag>
-      true
-    </ietf-netconf-txid-yp:with-etag>
-  </establish-subscription>
-</netconf:rpc>
+{::include examples/ex-16-request.xml}
 ~~~
 
 A server might send a subscription update like this:
 
 ~~~ xml
-<notification
-  xmlns="urn:ietf:params:xml:ns:netconf:notification:1.0"
-  xmlns:ietf-netconf-txid-yp=
-    "urn:ietf:params:xml:ns:yang:ietf-netconf-txid-yang-push">
-  <eventTime>2022-04-04T06:00:24.16Z</eventTime>
-  <push-change-update
-      xmlns="urn:ietf:params:xml:ns:yang:ietf-yang-push">
-    <id>89</id>
-    <datastore-changes>
-      <yang-patch>
-        <patch-id>0</patch-id>
-        <edit>
-          <edit-id>edit1</edit-id>
-          <operation>delete</operation>
-          <target xmlns:acl=
-            "urn:ietf:params:xml:ns:yang:ietf-access-control-list">
-            /acl:acls
-          </target>
-          <value>
-            <acl xmlns=
-              "urn:ietf:params:xml:ns:yang:ietf-access-control-list">
-              <name>A1</name>
-            </acl>
-          </value>
-        </edit>
-        <ietf-netconf-txid-yp:etag-value>
-          nc8008
-        </ietf-netconf-txid-yp:etag-value>
-      </yang-patch>
-    </datastore-changes>
-  </push-change-update>
-</notification>
+{::include examples/ex-16-response.xml}
 ~~~
 
 In case a client wishes to modify a previous subscription request in
@@ -2466,24 +1608,7 @@ order to no longer receive YANG-Push subscription updates, the request
 might look like this:
 
 ~~~ xml
-<rpc message-id="17"
-    xmlns="urn:ietf:params:xml:ns:netconf:base:1.0">
-  <modify-subscription
-      xmlns=
-        "urn:ietf:params:xml:ns:yang:ietf-subscribed-notifications"
-      xmlns:yp="urn:ietf:params:xml:ns:yang:ietf-yang-push"
-      xmlns:ietf-netconf-txid-yp=
-        "urn:ietf:params:xml:ns:yang:ietf-txid-yang-push">
-    <id>1011</id>
-    <yp:datastore
-        xmlns:ds="urn:ietf:params:xml:ns:yang:ietf-datastores">
-      ds:running
-    </yp:datastore>
-    <ietf-netconf-txid-yp:with-etag>
-      false
-    </ietf-netconf-txid-yp:with-etag>
-  </modify-subscription>
-</rpc>
+{::include examples/ex-17-request.xml}
 ~~~
 
 ## NMDA Compare
@@ -2496,116 +1621,21 @@ In this version of the example, the client requests that txid
 values, in this case etag-values, are annotated to the result.
 
 ~~~ xml
-<rpc message-id="101"
-    xmlns="urn:ietf:params:xml:ns:netconf:base:1.0">
-  <compare xmlns="urn:ietf:params:xml:ns:yang:ietf-nmda-compare"
-      xmlns:ds="urn:ietf:params:xml:ns:yang:ietf-datastores"
-      xmlns:ietf-netconf-txid-nmda-compare=
-        "urn:ietf:params:xml:ns:yang:ietf-netconf-txid-nmda-compare">
-    <source>ds:operational</source>
-    <target>ds:intended</target>
-    <report-origin/>
-    <ietf-netconf-txid-nmda-compare:with-etag>
-      true
-    </ietf-netconf-txid-nmda-compare:with-etag>
-    <xpath-filter
-        xmlns:if="urn:ietf:params:xml:ns:yang:ietf-interfaces">
-      /if:interfaces
-    </xpath-filter>
-  </compare>
-</rpc>
+{::include examples/ex-20-request.xml}
 ~~~
 
 RPC reply when a difference is detected:
 
 ~~~ xml
-<rpc-reply
-    xmlns="urn:ietf:params:xml:ns:netconf:base:1.0"
-    message-id="101">
-  <differences
-    xmlns="urn:ietf:params:xml:ns:yang:ietf-nmda-compare"
-    xmlns:or="urn:ietf:params:xml:ns:yang:ietf-origin"
-    xmlns:ietf-netconf-txid-nmda-compare=
-      "urn:ietf:params:xml:ns:yang:ietf-netconf-txid-nmda-compare">
-    <yang-patch>
-      <patch-id>interface status</patch-id>
-      <comment>
-        diff between operational (source) and intended (target),
-        with txid values taken from intended.
-      </comment>
-      <edit>
-        <edit-id>1</edit-id>
-        <operation>replace</operation>
-        <target>/ietf-interfaces:interface=eth0/enabled</target>
-        <value>
-          <if:enabled>false</if:enabled>
-        </value>
-        <source-value>
-          <if:enabled or:origin="or:learned">true</if:enabled>
-        </source-value>
-        <ietf-netconf-txid-nmda-compare:etag-value>
-          4004
-        </ietf-netconf-txid-nmda-compare:etag-value>
-      </edit>
-      <edit>
-        <edit-id>2</edit-id>
-        <operation>create</operation>
-        <target>/ietf-interfaces:interface=eth0/description</target>
-        <value>
-          <if:description>ip interface</if:description>
-        </value>
-        <ietf-netconf-txid-nmda-compare:etag-value>
-          8008
-        </ietf-netconf-txid-nmda-compare:etag-value>
-      </edit>
-    </yang-patch>
-  </differences>
-</rpc-reply>
+{::include examples/ex-20-response.xml}
 ~~~
 
 The same response in RESTCONF (using JSON format):
 
 ~~~ http
-HTTP/1.1 200 OK
-Date: Thu, 24 Jan 2019 20:56:30 GMT
-Server: example-server
-Content-Type: application/yang-data+json
+{::include examples/ex-20-response-header.http}
 
-{ "ietf-nmda-compare:output" : {
-    "differences" : {
-      "ietf-yang-patch:yang-patch" : {
-        "patch-id" : "interface status",
-        "comment" : "diff between intended (source) and operational",
-        "edit" : [
-          {
-            "edit-id" : "1",
-            "operation" : "replace",
-            "target" : "/ietf-interfaces:interface=eth0/enabled",
-            "value" : {
-              "ietf-interfaces:interface/enabled" : "false"
-            },
-            "source-value" : {
-              "ietf-interfaces:interface/enabled" : "true",
-              "@ietf-interfaces:interface/enabled" : {
-                "ietf-origin:origin" : "ietf-origin:learned"
-              }
-            },
-            "ietf-netconf-txid-nmda-compare:etag-value": "4004"
-          },
-          {
-            "edit-id" : "2",
-            "operation" : "create",
-            "target" : "/ietf-interfaces:interface=eth0/description",
-            "value" : {
-              "ietf-interface:interface/description" : "ip interface"
-            },
-            "ietf-netconf-txid-nmda-compare:etag-value": "8008"
-          }
-        ]
-      }
-    }
-  }
-}
+{::include examples/ex-20-response-body.json}
 ~~~
 
 # YANG Modules

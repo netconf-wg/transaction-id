@@ -1,0 +1,22 @@
+<rpc-reply xmlns="urn:ietf:params:xml:ns:netconf:base:1.0"
+           xmlns:acl=
+            "urn:ietf:params:xml:ns:yang:ietf-access-control-list"
+           xmlns:ietf-netconf-txid=
+             "urn:ietf:params:xml:ns:yang:ietf-netconf-txid"
+           message-id="11">
+  <rpc-error>
+    <error-type>protocol</error-type>
+    <error-tag>operation-failed</error-tag>
+    <error-severity>error</error-severity>
+    <error-info>
+      <ietf-netconf-txid:txid-value-mismatch-error-info>
+        <ietf-netconf-txid:mismatch-path>
+          /acl:acls/acl:acl[acl:name="A1"]
+        </ietf-netconf-txid:mismatch-path>
+        <ietf-netconf-txid:mismatch-etag-value>
+          cli6912
+        </ietf-netconf-txid:mismatch-etag-value>
+      </ietf-netconf-txid:txid-value-mismatch-error-info>
+    </error-info>
+  </rpc-error>
+</rpc-reply>

@@ -1,0 +1,8 @@
+<rpc message-id="14"
+    xmlns="urn:ietf:params:xml:ns:netconf:base:1.0"
+    xmlns:ietf-netconf-txid=
+      "urn:ietf:params:xml:ns:yang:ietf-netconf-txid">
+  <commit>
+    <ietf-netconf-txid:with-etag>true</ietf-netconf-txid:with-etag>
+  </commit>
+</rpc>

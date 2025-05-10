@@ -1,0 +1,31 @@
+<rpc-reply message-id="1"
+           xmlns="urn:ietf:params:xml:ns:netconf:base:1.0"
+           xmlns:txid="urn:ietf:params:xml:ns:netconf:txid:1.0">
+  <data txid:etag="fd6a52d9-5152-411c-a117-b99d3b723c93">
+    <acls xmlns=
+            "urn:ietf:params:xml:ns:yang:ietf-access-control-list"
+          txid:etag="fd6a52d9-5152-411c-a117-b99d3b723c93">
+      <acl txid:etag="2c4b50e4-4711-49f8-a2b2-2e20aebe120f">
+        <name>A1</name>
+        <aces txid:etag="2c4b50e4-4711-49f8-a2b2-2e20aebe120f">
+          <ace txid:etag="2c4b50e4-4711-49f8-a2b2-2e20aebe120f">
+            <name>R1</name>
+            <matches>
+              <ipv4>
+                <protocol>17</protocol>
+              </ipv4>
+            </matches>
+            <actions>
+              <forwarding xmlns:acl=
+              "urn:ietf:params:xml:ns:yang:ietf-access-control-list">
+                acl:accept
+              </forwarding>
+            </actions>
+          </ace>
+        </aces>
+      </acl>
+      ...
+    </acls>
+    ...
+  </data>
+</rpc-reply>

@@ -1,0 +1,36 @@
+<rpc xmlns="urn:ietf:params:xml:ns:netconf:base:1.0" message-id="8">
+  <edit-config xmlns="urn:ietf:params:xml:ns:netconf:base:1.0"
+               xmlns:txid="urn:ietf:params:xml:ns:netconf:txid:1.0"
+               xmlns:ietf-netconf-txid=
+                "urn:ietf:params:xml:ns:yang:ietf-netconf-txid">
+    <target>
+      <running/>
+    </target>
+    <test-option>test-then-set</test-option>
+    <ietf-netconf-txid:with-etag>true</ietf-netconf-txid:with-etag>
+    <config>
+      <acls
+        xmlns="urn:ietf:params:xml:ns:yang:ietf-access-control-list"
+        txid:etag="nc5152">
+        <acl txid:etag="nc4711">
+          <name>A1</name>
+          <aces txid:etag="nc4711">
+            <ace txid:etag="nc4711">
+              <matches>
+                <ipv4>
+                  <protocol>6</protocol>
+                </ipv4>
+              </matches>
+              <actions>
+                <forwarding xmlns:acl=
+              "urn:ietf:params:xml:ns:yang:ietf-access-control-list">
+                  acl:accept
+                </forwarding>
+              </actions>
+            </ace>
+          </aces>
+        </acl>
+      </acls>
+    </config>
+  </edit-config>
+</rpc>

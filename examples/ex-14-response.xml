@@ -1,0 +1,5 @@
+<rpc-reply message-id="14"
+    xmlns="urn:ietf:params:xml:ns:netconf:base:1.0"
+    xmlns:txid="urn:ietf:params:xml:ns:netconf:txid:1.0">
+  <ok txid:etag="nc8008"/>
+</rpc-reply>

@@ -1,0 +1,23 @@
+<netconf:rpc message-id="16"
+             xmlns:netconf="urn:ietf:params:xml:ns:netconf:base:1.0">
+  <establish-subscription
+      xmlns=
+        "urn:ietf:params:xml:ns:yang:ietf-subscribed-notifications"
+      xmlns:yp="urn:ietf:params:xml:ns:yang:ietf-yang-push"
+      xmlns:ietf-netconf-txid-yp=
+        "urn:ietf:params:xml:ns:yang:ietf-txid-yang-push">
+    <yp:datastore
+        xmlns:ds="urn:ietf:params:xml:ns:yang:ietf-datastores">
+      ds:running
+    </yp:datastore>
+    <yp:datastore-xpath-filter
+        xmlns:acl=
+          "urn:ietf:params:xml:ns:yang:ietf-access-control-list">
+      /acl:acls
+    </yp:datastore-xpath-filter>
+    <yp:on-change/>
+    <ietf-netconf-txid-yp:with-etag>
+      true
+    </ietf-netconf-txid-yp:with-etag>
+  </establish-subscription>
+</netconf:rpc>

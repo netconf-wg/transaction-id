@@ -1,0 +1,14 @@
+<rpc xmlns="urn:ietf:params:xml:ns:netconf:base:1.0" message-id="4"
+     xmlns:txid="urn:ietf:params:xml:ns:netconf:txid:1.0">
+  <get-config>
+    <source>
+      <running/>
+    </source>
+    <filter>
+      <acls
+        xmlns="urn:ietf:params:xml:ns:yang:ietf-access-control-list"
+        txid:last-modified="?"/>
+      <nacm xmlns="urn:ietf:params:xml:ns:yang:ietf-netconf-acm"/>
+    </filter>
+  </get-config>
+</rpc>

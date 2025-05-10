@@ -1,0 +1,32 @@
+<notification
+  xmlns="urn:ietf:params:xml:ns:netconf:notification:1.0"
+  xmlns:ietf-netconf-txid-yp=
+    "urn:ietf:params:xml:ns:yang:ietf-netconf-txid-yang-push">
+  <eventTime>2022-04-04T06:00:24.16Z</eventTime>
+  <push-change-update
+      xmlns="urn:ietf:params:xml:ns:yang:ietf-yang-push">
+    <id>89</id>
+    <datastore-changes>
+      <yang-patch>
+        <patch-id>0</patch-id>
+        <edit>
+          <edit-id>edit1</edit-id>
+          <operation>delete</operation>
+          <target xmlns:acl=
+            "urn:ietf:params:xml:ns:yang:ietf-access-control-list">
+            /acl:acls
+          </target>
+          <value>
+            <acl xmlns=
+              "urn:ietf:params:xml:ns:yang:ietf-access-control-list">
+              <name>A1</name>
+            </acl>
+          </value>
+        </edit>
+        <ietf-netconf-txid-yp:etag-value>
+          nc8008
+        </ietf-netconf-txid-yp:etag-value>
+      </yang-patch>
+    </datastore-changes>
+  </push-change-update>
+</notification>

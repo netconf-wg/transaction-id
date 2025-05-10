@@ -1,0 +1,18 @@
+<rpc message-id="101"
+    xmlns="urn:ietf:params:xml:ns:netconf:base:1.0">
+  <compare xmlns="urn:ietf:params:xml:ns:yang:ietf-nmda-compare"
+      xmlns:ds="urn:ietf:params:xml:ns:yang:ietf-datastores"
+      xmlns:ietf-netconf-txid-nmda-compare=
+        "urn:ietf:params:xml:ns:yang:ietf-netconf-txid-nmda-compare">
+    <source>ds:operational</source>
+    <target>ds:intended</target>
+    <report-origin/>
+    <ietf-netconf-txid-nmda-compare:with-etag>
+      true
+    </ietf-netconf-txid-nmda-compare:with-etag>
+    <xpath-filter
+        xmlns:if="urn:ietf:params:xml:ns:yang:ietf-interfaces">
+      /if:interfaces
+    </xpath-filter>
+  </compare>
+</rpc>

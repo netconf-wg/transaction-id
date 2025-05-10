@@ -1,0 +1,35 @@
+{ "ietf-nmda-compare:output" : {
+    "differences" : {
+      "ietf-yang-patch:yang-patch" : {
+        "patch-id" : "interface status",
+        "comment" : "diff between intended (source) and operational",
+        "edit" : [
+          {
+            "edit-id" : "1",
+            "operation" : "replace",
+            "target" : "/ietf-interfaces:interface=eth0/enabled",
+            "value" : {
+              "ietf-interfaces:interface/enabled" : "false"
+            },
+            "source-value" : {
+              "ietf-interfaces:interface/enabled" : "true",
+              "@ietf-interfaces:interface/enabled" : {
+                "ietf-origin:origin" : "ietf-origin:learned"
+              }
+            },
+            "ietf-netconf-txid-nmda-compare:etag-value": "4004"
+          },
+          {
+            "edit-id" : "2",
+            "operation" : "create",
+            "target" : "/ietf-interfaces:interface=eth0/description",
+            "value" : {
+              "ietf-interface:interface/description" : "ip interface"
+            },
+            "ietf-netconf-txid-nmda-compare:etag-value": "8008"
+          }
+        ]
+      }
+    }
+  }
+}

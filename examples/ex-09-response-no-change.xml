@@ -1,0 +1,80 @@
+<rpc-reply message-id="9"
+           xmlns="urn:ietf:params:xml:ns:netconf:base:1.0"
+           xmlns:txid="urn:ietf:params:xml:ns:netconf:txid:1.0">
+  <data>
+    <acls
+      xmlns="urn:ietf:params:xml:ns:yang:ietf-access-control-list"
+      txid:etag="nc7688">
+      <acl txid:etag="nc7688">
+        <name>A1</name>
+        <aces txid:etag="nc7688">
+          <ace txid:etag="nc7688">
+            <name>R1</name>
+            <matches>
+              <ipv4>
+                <protocol>6</protocol>
+              </ipv4>
+            </matches>
+            <actions>
+              <forwarding xmlns:acl=
+              "urn:ietf:params:xml:ns:yang:ietf-access-control-list">
+                acl:accept
+              </forwarding>
+            </actions>
+          </ace>
+        </aces>
+      </acl>
+      <acl txid:etag="nc6614">
+        <name>A2</name>
+        <aces txid:etag="nc6614">
+          <ace txid:etag="nc4711">
+            <name>R7</name>
+            <matches>
+              <ipv4>
+                <dscp>10</dscp>
+              </ipv4>
+            </matches>
+            <actions>
+              <forwarding xmlns:acl=
+              "urn:ietf:params:xml:ns:yang:ietf-access-control-list">
+                acl:accept
+              </forwarding>
+            </actions>
+          </ace>
+          <ace txid:etag="nc5152">
+            <name>R8</name>
+            <matches>
+              <udp>
+                <source-port>
+                  <port>22</port>
+                </source-port>
+              </udp>
+            </matches>
+            <actions>
+              <forwarding xmlns:acl=
+              "urn:ietf:params:xml:ns:yang:ietf-access-control-list">
+                acl:accept
+              </forwarding>
+            </actions>
+          </ace>
+          <ace txid:etag="nc6614">
+            <name>R9</name>
+            <matches>
+              <tcp>
+                <source-port>
+                  <port>830</port>
+                </source-port>
+              </tcp>
+            </matches>
+            <actions>
+              <forwarding xmlns:acl=
+              "urn:ietf:params:xml:ns:yang:ietf-access-control-list">
+                acl:accept
+              </forwarding>
+            </actions>
+          </ace>
+        </aces>
+      </acl>
+    </acls>
+  </data>
+</rpc-reply>

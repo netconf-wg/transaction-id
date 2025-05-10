@@ -1,0 +1,8 @@
+<rpc xmlns="urn:ietf:params:xml:ns:netconf:base:1.0" message-id="1"
+     xmlns:txid="urn:ietf:params:xml:ns:netconf:txid:1.0">
+  <get-config txid:etag="?">
+    <source>
+      <running/>
+    </source>
+  </get-config>
+</rpc>
