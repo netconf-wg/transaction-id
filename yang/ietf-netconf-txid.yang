@@ -5,15 +5,23 @@ module ietf-netconf-txid {
 
   import ietf-netconf {
     prefix nc;
+    reference
+      "RFC 6241: Network Configuration Protocol (NETCONF)";
   }
   import ietf-netconf-nmda {
     prefix ncds;
+    reference
+      "RFC 8342: Network Management Datastore Architecture (NMDA)";
   }
   import ietf-yang-structure-ext {
     prefix sx;
+    reference
+      "RFC 8791: YANG Data Structure Extensions.";
   }
   import ietf-yang-types {
     prefix yang;
+    reference
+      "RFC 6991: Common YANG Data Types";
   }
 
   organization

@@ -20,7 +20,6 @@ pi:
   - symrefs
 
 normative:
-  RFC2119:
   RFC4741:
   RFC6241:
   RFC6242:
@@ -40,15 +39,15 @@ normative:
 informative:
   RFC3688:
   RFC6020:
-  RFC7232:
   RFC7952:
   RFC8519:
+  RFC9110:
 
 author:
   - ins: J. Lindblad
     name: Jan Lindblad
-    organization: Cisco Systems
-    email: jlindbla@cisco.com
+    organization: All For Eco
+    email: jan.lindblad+ietf@for.eco
 
 --- abstract
 
@@ -67,7 +66,7 @@ need for servers to store information about the clients.
 
 # Introduction
 
-When a NETCONF client {{!RFC6241}} wishes to initiate a new configuration transaction
+When a NETCONF client {{RFC6241}} wishes to initiate a new configuration transaction
 with a NETCONF server, a frequently occurring use case is for the
 client to find out if the configuration has changed since the client
 last communicated with that server.  Such changes could occur, for
@@ -99,15 +98,15 @@ server. This document solves the interoperability issue.
 
 RESTCONF, {{RFC8040}},
 defines a mechanism for detecting changes in configuration subtrees
-based on Entity-Tags (ETags) and Last-Modified headers. An example is depicted in Appendix B.2.2 of {{!RFC8040}}
+based on Entity-Tags (ETags) and Last-Modified headers. An example is depicted in Appendix B.2.2 of {{RFC8040}}
 
 In conjunction with this, RESTCONF
 provides a way to make configuration changes conditional on the server
 configuration being untouched by others.  This mechanism leverages
-conditional requests per {{Section 13 of !RFC9110}}.
+conditional requests per {{Section 13 of RFC9110}}.
 
 This document defines similar mechanism for NETCONF,
-{{!RFC6241}}, for config true data.  It also ties this in
+{{RFC6241}}, for config true data.  It also ties this in
 with YANG-Push, {{RFC8641}}, and "Comparison of Network
 Management Datastore Architecture (NMDA) Datastores",
 {{RFC9144}}.  'Config false' data (operational data, state, and statistics)
@@ -194,10 +193,10 @@ behavior of ``<get-config>``, ``<get-data>``, ``<edit-config>``, ``<edit-data>``
 that clients are able to conditionally retrieve and update the
 configuration in a NETCONF server.
 
-For servers implementing YANG-Push {{!RFC8641}}, an extension for conveying txid
+For servers implementing YANG-Push {{RFC8641}}, an extension for conveying txid
 updates as part of subscription updates is also defined.  A similar
 extension is also defined for servers implementing
-"Comparison of NMDA Datastores" {{!RFC9144}}.
+"Comparison of NMDA Datastores" {{RFC9144}}.
 
 Several low level mechanisms could be defined to fulfill the
 requirements for efficient client/server txid synchronization.
@@ -302,7 +301,7 @@ server may maintain for YANG data tree nodes.
 
 ## Initial Configuration Retrieval
 
-When a NETCONF server receives a ``<get-config>`` or ``<get-data>`` request ({{Section 3.1.1 of !RFC8526}})
+When a NETCONF server receives a ``<get-config>`` or ``<get-data>`` request ({{Section 3.1.1 of RFC8526}})
 containing requests for txid values, and assuming no authorization or validation error is encountered,  it MUST, in the reply, return
 txid values for all Versioned Nodes below the point requested by
 the client.
@@ -1177,7 +1176,7 @@ The etag attribute values are opaque strings chosen freely.  They MUST
 consist of ASCII printable characters (VCHAR), except that the etag
 string MUST NOT contain space, backslash or double quotes. The point of
 these restrictions is to make it easy to reuse implementations that
-adhere to section 2.3.1 in {{RFC7232}}.  The probability
+adhere to section 8.8.3.1 in {{RFC9110}}.  The probability
 SHOULD be made very low that an etag value that has been used
 historically by a server is used again by that server if the
 configuration is different.
@@ -1188,7 +1187,7 @@ might implement), if it implements more than one.  It is RECOMMENDED
 that the etag txid has an encoding specific suffix, especially when it
 is not encoded in XML.  E.g. a response encoded in JSON might append
 "+json" at the end of the etag value. This is in line with the language
-in {{RFC7232}} and traditions in the HTTP world at large.
+in {{RFC9110}} and traditions in the HTTP world at large.
 
 The detailed rules for when to update the etag value are described in
 {{sec-principles}}.  These
@@ -1763,7 +1762,18 @@ This document requests IANA to register three module names in the "YANG
 Module Names" subregistry {{RFC6020}} within the "YANG Parameters"
 registry.
 
-RFC Ed.: replace XXXX with actual RFC number and remove this note.
+RFC Ed.: replace XXXX with actual RFC number in this document as well as in the following YANG modules, and remove this note:
+ietf-netconf-txid-nmda-compare.yang:      "RFC XXXX: Transaction ID Mechanism for NETCONF";
+ietf-netconf-txid-nmda-compare.yang:     This version of this YANG module is part of RFC XXXX
+ietf-netconf-txid-nmda-compare.yang:     (https://www.rfc-editor.org/info/rfcXXXX); see the RFC itself
+ietf-netconf-txid-nmda-compare.yang:      "RFC XXXX: Transaction ID Mechanism for NETCONF";
+ietf-netconf-txid-yang-push.yang:      "RFC XXXX: Transaction ID Mechanism for NETCONF";
+ietf-netconf-txid-yang-push.yang:     This version of this YANG module is part of RFC XXXX
+ietf-netconf-txid-yang-push.yang:     (https://www.rfc-editor.org/info/rfcXXXX); see the RFC itself
+ietf-netconf-txid-yang-push.yang:      "RFC XXXX: Transaction ID Mechanism for NETCONF";
+ietf-netconf-txid.yang:     This version of this YANG module is part of RFC XXXX
+ietf-netconf-txid.yang:     (https://www.rfc-editor.org/info/rfcXXXX); see the RFC itself
+ietf-netconf-txid.yang:      "RFC XXXX: Transaction ID Mechanism for NETCONF";
 
 ~~~
   name: ietf-netconf-txid
@@ -1787,6 +1797,29 @@ RFC Ed.: replace XXXX with actual RFC number and remove this note.
 ~~~
 
 # Changes (to be deleted by RFC Editor)
+
+## Major changes in -09 since -08
+
+Changes based on shepherd review.
+
+* Updated references to RFC 7232 (Etag, etc.) to the corresponding
+sections of RFC 9110, which obsoletes RFC 7232. Added a normative
+reference to RFC 9562 (UUIDs, etc.).
+
+* Made sure all YANG imports have references to the corresponding
+RFC document. Updated the copyright year to 2025 in a few modules.
+
+* Broke out NETCONF example messages into separate files, and added
+build logic to perform XML validation on them. Corrected a number of
+example message errors.
+
+* Changed some document IETF metadata values (abbrev, area, author's
+affiliation).
+
+* Corrected IANA registration parameters for
+ietf-netconf-txid-yang-push
+
+* Spelling and formatting updates.
 
 ## Major changes in -08 since -07
 
