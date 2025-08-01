@@ -1645,7 +1645,7 @@ The same response in RESTCONF (using JSON format):
 {::include yang/ietf-netconf-txid.yang}
 ~~~~
 {: sourcecode-markers="true"
-sourcecode-name="ietf-netconf-txid@2023-03-01.yang"}
+sourcecode-name="ietf-netconf-txid@2025-08-01.yang"}
 
 ## Additional support for txid in YANG-Push
 
@@ -1653,7 +1653,7 @@ sourcecode-name="ietf-netconf-txid@2023-03-01.yang"}
 {::include yang/ietf-netconf-txid-yang-push.yang}
 ~~~~
 {: sourcecode-markers="true"
-sourcecode-name="ietf-netconf-txid-yang-push@2022-04-01.yang"}
+sourcecode-name="ietf-netconf-txid-yang-push@2025-08-01.yang"}
 
 ## Additional support for txid in NMDA Compare
 
@@ -1661,7 +1661,7 @@ sourcecode-name="ietf-netconf-txid-yang-push@2022-04-01.yang"}
 {::include yang/ietf-netconf-txid-nmda-compare.yang}
 ~~~~
 {: sourcecode-markers="true"
-sourcecode-name="ietf-netconf-txid-nmda-compare@2023-05-01.yang"}
+sourcecode-name="ietf-netconf-txid-nmda-compare@2025-08-01.yang"}
 
 # Security Considerations
 
@@ -1797,6 +1797,13 @@ ietf-netconf-txid.yang:      "RFC XXXX: Transaction ID Mechanism for NETCONF";
 ~~~
 
 # Changes (to be deleted by RFC Editor)
+
+## Major changes in -10 since -09
+
+Changes based on shepherd review.
+
+* Updated module revision dates, copyright year and author's
+email address.
 
 ## Major changes in -09 since -08
 
