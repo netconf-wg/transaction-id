@@ -5,12 +5,14 @@
 *.txt
 *.upload
 *~
+.includes.mk
 .refcache
 .tags
 .targets.mk
-.includes.mk
 /*-[0-9][0-9].xml
+/.*.mk
 /.gems/
+/.idea/
 /.refcache
 /.targets.mk
 /.venv/
