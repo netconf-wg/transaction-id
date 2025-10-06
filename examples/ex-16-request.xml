@@ -5,7 +5,7 @@
         "urn:ietf:params:xml:ns:yang:ietf-subscribed-notifications"
       xmlns:yp="urn:ietf:params:xml:ns:yang:ietf-yang-push"
       xmlns:ietf-netconf-txid-yp=
-        "urn:ietf:params:xml:ns:yang:ietf-txid-yang-push">
+        "urn:ietf:params:xml:ns:yang:ietf-netconf-txid-yang-push">
     <yp:datastore
         xmlns:ds="urn:ietf:params:xml:ns:yang:ietf-datastores">
       ds:running

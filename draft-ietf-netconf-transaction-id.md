@@ -52,11 +52,11 @@ author:
 --- abstract
 
 NETCONF clients and servers often need to have a synchronized view of
-the server's configuration data stores.  The volume of configuration
-data in a server may be very large, while data store changes typically
+the server's configuration datastores.  The volume of configuration
+data in a server may be very large, while datastore changes typically
 are small when observed at typical client resynchronization intervals.
 
-Rereading the entire data store and analyzing the response for changes
+Rereading the entire datastore and analyzing the response for changes
 is inefficient for synchronization.  This document
 specifies a NETCONF extension that allows clients and servers to
 keep synchronized with a much smaller data exchange and without any
@@ -82,10 +82,10 @@ computation cost.
 
 Furthermore, even if the configuration is reported to be unchanged,
 that will not guarantee that the configuration remains unchanged
-when a client sends a subsequent change request, a few moments later.
+when a client sends a subsequent change request, a few moments later,
+unless explicit locking is used.
 
-In order to simplify the task of tracking changes, a NETCONF server
-may implement a meta level transaction tag or timestamp for an entire
+In order to simplify the task of tracking changes, this document enables a NETCONF server to implement a meta level transaction tag or timestamp for an entire
 configuration datastore or YANG subtree, and offer clients a way to
 read and compare this tag or timestamp.  If the tag or timestamp is
 unchanged, clients can avoid performing expensive operations.  Such
@@ -97,7 +97,7 @@ incompatible mechanisms for obtaining a transaction id from a NETCONF
 server. This document solves the interoperability issue.
 
 RESTCONF, {{RFC8040}},
-defines a mechanism for detecting changes in configuration subtrees
+leverages an HTTP mechanism for detecting changes in configuration subtrees
 based on Entity-Tags (ETags) and Last-Modified headers. An example is depicted in Appendix B.2.2 of {{RFC8040}}
 
 In conjunction with this, RESTCONF
@@ -343,9 +343,8 @@ txid values below that point of the data tree.
 ~~~
 {: title="Initial Configuration Retrieval.  The client annotated
 the get-config request itself with the txid request value, which
-makes the server return all txid values in the entire datastore,
-that also fall within the requested subtree filter.  The most
-recent change seems to have been an update to ace R8 and
+makes the server return the txid values for the nodes returned.
+The most recent change is shown to be an update to ace R8 and
 R9." #fig-baseline}
 
 > The call flow examples in this document use a 4-digit,
@@ -1288,7 +1287,7 @@ to the following rules:
 datastore, the same txid value as the versioned node in running
 MUST be used.
 
-- If the versioned node is different in the candidate store
+- If the versioned node is different in the candidate datastore
 than in the running datastore, the server has a choice of what
 to return. The server MAY return the special "txid-unknown" value "!".
 If the txid-unknown value is not returned, the server MUST return
@@ -1797,6 +1796,18 @@ ietf-netconf-txid.yang:      "RFC XXXX: Transaction ID Mechanism for NETCONF";
 ~~~
 
 # Changes (to be deleted by RFC Editor)
+
+## Major changes in -11 since -10
+
+* Wording changed about RESTCONF not defining HTTP header mechanism, but leveraging it
+
+* Wording changed about the purpose of this document, in the introduction
+
+* Pointed out that explicit locking could be used to remove risk of clients clobbering each other.
+
+* Corrected spelling of datastore in a handful places
+
+* Corrected namespace URIs in a couple of examples
 
 ## Major changes in -10 since -09
 
